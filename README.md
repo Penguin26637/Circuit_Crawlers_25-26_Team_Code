@@ -1,3 +1,59 @@
+FTC Team 26637: Circuit Crawlers Robot Code
+Welcome to the official robot code repository for FIRST Tech Challenge (FTC) Team 26637, the Circuit Crawlers!
+This repository contains the source code for the Android application used to control our competition robot, developed using Android Studio and the FTC SDK.
+🚀 Getting Started
+To use this code, you will need to set up your development environment.
+Prerequisites
+Android Studio: The official IDE for Android development. The latest versions are recommended.
+FTC Robot Controller App: The base software for the robot control system.
+Downloading the Project
+You can clone the repository to your local machine using Git. Using the --depth=1 argument saves time and space by only downloading the most current version.
+bash
+git clone --depth=1 github.com
+Use code with caution.
+
+Replace github.com with the actual URL of your team's GitHub repository.
+Setup Instructions
+Import into Android Studio: Open Android Studio and select "Open an existing Android Studio project" and select the cloned directory.
+Connect to Robot: Follow the official FTC Documentation to connect your development environment to the Robot Control Hub or Expansion Hub.
+Configure Hardware: Use the "Configure Robot" menu on the Driver Station to match the hardware configuration in the code to your physical robot's setup.
+📁 Code Structure
+Our code is organized within the TeamCode module, following the standard FTC file structure.
+FtcRobotController: The base FTC SDK provided by FIRST.
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode: This is where all our custom OpModes and supporting classes are located.
+autonomous: Contains all autonomous period OpModes.
+teleop: Contains all driver-controlled period OpModes.
+util: Helper classes, such as hardware maps and control utilities.
+vision: Classes related to vision processing, using tools like OpenCV or TensorFlow.
+🎮 Usage
+TeleOp (Driver Controlled)
+PrimaryTeleOp: Our main OpMode for the driver-controlled period.
+Control Scheme:
+Gamepad 1:
+Left Stick: Movement (Mecanum drive)
+Right Stick: Turning
+Right/Left Bumpers: Fine control adjustments
+Gamepad 2:
+(Document specific mechanisms here, e.g., lift, intake, claw controls)
+Autonomous
+We use a flexible system for selecting autonomous strategies and alliance colors directly from the Driver Station.
+AutonomousMain: The primary entry point for all autonomous routines.
+Selection:
+Use the gamepad d-pad or a custom menu system (if implemented) to choose the starting position, alliance color (Red/Blue), and specific actions (e.g., park only, score pixel).
+💡 Contributing
+Team members should follow standard Git practices when working with this repository:
+Pull the latest changes before starting work.
+Create a new branch for significant new features or bug fixes.
+Commit changes with clear, descriptive messages.
+Push changes to the remote repository regularly.
+Communication within the sub-teams (programming, build, design) is essential to ensure code integrity and functionality.
+❓ Getting Help / Resources
+If you are new to FTC programming, these resources are incredibly helpful:
+FTC Documentation and Tutorials
+FTC Java SDK API Documentation
+FIRST Tech Challenge Community Forum
+Go Circuit Crawlers! 🤖
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
