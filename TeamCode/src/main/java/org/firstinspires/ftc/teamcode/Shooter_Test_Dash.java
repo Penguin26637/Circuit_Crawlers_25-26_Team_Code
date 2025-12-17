@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp(name="Shooter_Test_Dash")
+@TeleOp(name="Shooter_Test_Dash", group = "Testing")
 public class Shooter_Test_Dash extends OpMode {
 
     // ============= Motor Constants ============

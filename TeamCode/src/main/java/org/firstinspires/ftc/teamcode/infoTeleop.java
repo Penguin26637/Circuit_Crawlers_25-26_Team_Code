@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="infoTeleop", group="Linear OpMode")
+@TeleOp(name="infoTeleop", group="Testing")
 @Disabled
 public class infoTeleop extends LinearOpMode {
 

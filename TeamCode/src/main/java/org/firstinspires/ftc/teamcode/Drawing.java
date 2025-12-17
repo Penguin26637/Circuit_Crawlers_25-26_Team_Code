@@ -4,6 +4,10 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+
+//@Name(name="Drawing", group="RR")
+//May Cause Errors Comment out if so ^
+
 public final class Drawing {
     private Drawing() {}
 

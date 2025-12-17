@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="CPUplsCook_VisionAndColorSensors", group="TELEOP")
 @Config
+@Disabled
 public class CPUplsCookExpansiveV_CS extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---
@@ -717,6 +719,8 @@ public class CPUplsCookExpansiveV_CS extends LinearOpMode {
 
         packet.put("Erik is a ", "Big Dumb");
 
+        packet.put("THIS IS FOR OLD ROBOT DO NOT USE", "je");
+
         dashboard.sendTelemetryPacket(packet);
 
         // --- Phone Telemetry ---
@@ -739,6 +743,9 @@ public class CPUplsCookExpansiveV_CS extends LinearOpMode {
         telemetry.addData("CS2 Hue", currentCS2Hue);
         telemetry.addData("Avg Hue", currentAvgHue);
         telemetry.addData("Detected", currentDetectedColor);
+
+
+        telemetry.addData("THIS IS FOR OLD ROBOT DO NOT USE", "asdf");
 
         telemetry.addLine("\nErik is a Big Dumb");
     }

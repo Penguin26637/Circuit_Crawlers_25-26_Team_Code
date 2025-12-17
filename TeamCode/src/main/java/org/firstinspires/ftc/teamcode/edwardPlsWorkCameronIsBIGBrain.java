@@ -50,7 +50,7 @@ import java.lang.Math;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="edwardPlsWorkCameronIsBIGBrain", group="Linear OpMode")
+@TeleOp(name="edwardPlsWorkCameronIsBIGBrain", group="Old Auto")
 @Disabled
 public class edwardPlsWorkCameronIsBIGBrain extends LinearOpMode {
 

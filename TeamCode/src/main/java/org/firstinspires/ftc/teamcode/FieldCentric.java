@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @Disabled
-@TeleOp(name = "FieldCentric", group = "Linear OpMode")
+@TeleOp(name = "FieldCentric", group = "Drive Train")
 public class FieldCentric extends LinearOpMode {
 
     // Define motors                                

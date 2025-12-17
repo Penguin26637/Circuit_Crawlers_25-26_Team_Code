@@ -13,6 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 
 import java.util.Objects;
 
+//@name(name = "PinpointLocalizer", group = "RR Tuning")
+// May Cause Errors Comment out if so ^
+
+
 // @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {

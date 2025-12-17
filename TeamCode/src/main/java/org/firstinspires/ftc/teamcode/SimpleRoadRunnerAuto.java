@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 @Disabled
-@Autonomous(name = "Simple Road Runner Auto", group = "Autonomous")
+@Autonomous(name = "Simple Road Runner Auto", group = "Auto")
 public class SimpleRoadRunnerAuto extends LinearOpMode {
 
     @Override

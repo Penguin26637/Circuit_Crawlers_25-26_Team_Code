@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-@TeleOp(name = "HuskyLensTest (Dashboard + Telemetry Synced)", group = "Sensor")
+@TeleOp(name = "HuskyLensTest", group = "Camera Vision")
 public class HuskyLensTest extends LinearOpMode {
 
     private static final int READ_PERIOD = 1; // seconds

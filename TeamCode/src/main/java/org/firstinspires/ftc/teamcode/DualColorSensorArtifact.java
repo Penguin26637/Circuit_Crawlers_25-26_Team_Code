@@ -9,7 +9,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-@TeleOp(name="Dual V3 Smoothed Detection Dashboard")
+@TeleOp(name="Dual V3 Smoothed Detection Dashboard", group = "Testing")
 @Config
 public class DualColorSensorArtifact extends LinearOpMode {
 

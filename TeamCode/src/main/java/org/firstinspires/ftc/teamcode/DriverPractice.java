@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name="DriverPractice", group="Linear OpMode")
+@TeleOp(name="DriverPractice", group="Drive Train")
 public class DriverPractice extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---

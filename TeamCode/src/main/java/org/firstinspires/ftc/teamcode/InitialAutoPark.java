@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Initial Auto Park", group="Robot")
+@Autonomous(name="Initial Auto Park", group="Auto Testing")
 @Disabled
 public class InitialAutoPark extends LinearOpMode {
 

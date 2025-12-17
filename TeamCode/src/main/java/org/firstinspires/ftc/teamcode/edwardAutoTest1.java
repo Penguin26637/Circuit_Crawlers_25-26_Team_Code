@@ -99,7 +99,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="edwardAutoRun", group="Robot")
+@Autonomous(name="edwardAutoRun", group="Old Auto")
 @Disabled
 public class edwardAutoTest1 extends LinearOpMode {
     private Servo leftClawOutake;
