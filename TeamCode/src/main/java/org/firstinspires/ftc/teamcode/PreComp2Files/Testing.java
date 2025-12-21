@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
+import org.firstinspires.ftc.teamcode.PreComp2Files.MotorPowerRegulator;
 
 /**
  * TeleOp with MotorPowerRegulator for shooter and back motor control
