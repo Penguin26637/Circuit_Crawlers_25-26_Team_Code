@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.PreComp2Files.MotorPowerRegulator;
  *   drive(24, 0.5);    // Drive forward 24 inches at 50% power
  */
 @Autonomous(name = "Auto Comb", group = "Auto")
-public class AutoComb extends LinearOpMode {
+public class AutoComb_New extends LinearOpMode {
 
     // --- Drive motors ---
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;

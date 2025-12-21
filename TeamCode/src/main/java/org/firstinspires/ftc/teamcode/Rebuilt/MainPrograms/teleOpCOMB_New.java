@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  */
 @TeleOp(name = "TeleOp Comb (Debugged)", group = "Examples")
 @Config
-public class teleOpCOMB extends LinearOpMode {
+public class teleOpCOMB_New extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;

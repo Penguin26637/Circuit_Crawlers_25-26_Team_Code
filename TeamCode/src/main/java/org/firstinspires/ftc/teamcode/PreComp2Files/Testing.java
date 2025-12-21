@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.PreComp2Files;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -15,8 +15,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
+
 import org.firstinspires.ftc.teamcode.PreComp2Files.MotorPowerRegulator;
+import org.firstinspires.ftc.teamcode.PreComp2Files.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
+
 
 /**
  * TeleOp with MotorPowerRegulator for shooter and back motor control
