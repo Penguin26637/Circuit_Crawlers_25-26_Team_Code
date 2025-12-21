@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -29,6 +30,7 @@ public class DriverPractice extends LinearOpMode {
     private boolean slow_mode = false;
     private boolean robot_centric = true;
     private boolean field_centric = false;
+
 
     private double getBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
