@@ -6,8 +6,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
+import org.firstinspires.ftc.teamcode.PreComp2Files.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PreComp2Files.TankDrive;
+
+
 @Disabled
 public final class SplineTest extends LinearOpMode {
     @Override
