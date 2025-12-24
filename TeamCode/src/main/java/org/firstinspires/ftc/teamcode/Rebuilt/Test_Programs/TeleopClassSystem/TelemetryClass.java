@@ -22,7 +22,7 @@ public class TelemetryClass {
     // References to other classes - Public - Set from main teleop
     public DriveControlClass drive;
     public IntakeClass intake;
-    public ShooterClassMK2 shooter;
+    public ShooterClass shooter;
     public OdometryClass odometry;
 
     // Status - Public

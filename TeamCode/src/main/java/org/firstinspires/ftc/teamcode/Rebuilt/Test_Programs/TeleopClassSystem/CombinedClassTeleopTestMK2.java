@@ -115,13 +115,13 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-        telem = new TelemetryClass(telemetry, hardwareMap);
-
-        // Link classes to telemetry
-        telem.drive = drive;
-        telem.intake = intake;
-        telem.shooter = shooter;
-        telem.odometry = odometry;
+//        telem = new TelemetryClass(telemetry, hardwareMap);
+//
+//        // Link classes to telemetry
+//        telem.drive = drive;
+//        telem.intake = intake;
+//        telem.shooter = shooter;
+//        telem.odometry = odometry;
 
         // Set initial states in classes
         drive.nerf = slowModeActive ? slowSpeed : normalSpeed;
