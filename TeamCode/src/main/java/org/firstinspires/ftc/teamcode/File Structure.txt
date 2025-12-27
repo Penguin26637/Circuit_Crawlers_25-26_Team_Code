@@ -1,0 +1,6 @@
+All Old Files From 24-25 Into the Deep and 25-26 Files from before 12/21/2025 are now in the folder PreComp2Files
+
+This Folder Includes all files from 12/21/25 onward and is sorted into 2 sections
+
+The main Teleop and Auto Files as well as any associated Classes go directly in the Rebuilt folder all test programs go in the Test Program folder to aid organization
+
