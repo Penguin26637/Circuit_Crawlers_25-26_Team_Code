@@ -19,16 +19,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
 
 /**
- * Example TeleOp that uses the ObeliskIntakeSystem class
- *
- * This demonstrates how to integrate the intake system into your existing TeleOp code
+ * TeleOp that uses the MotorPowerRegulator class for shooter control and back motor PID
+ * DEBUGGED VERSION - Fixed button debouncing and logic issues
  */
-@TeleOp(name = "TeleOp Comb", group = "Examples")
+@TeleOp(name = "TeleOp Comb (Debugged)", group = "Examples")
 @Config
 public class teleOpCOMB extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
+
+    // ========== BACK MOTOR CONTROLLERS - USING MotorPowerRegulator ==========
+    private MotorPowerRegulator backLeftController;
+    private MotorPowerRegulator backRightController;
 
     // --- Wheel brake ---
     public static boolean wheelBreak = false;
@@ -39,10 +42,12 @@ public class teleOpCOMB extends LinearOpMode {
 
     // --- Odometry encoders (no motors attached, just encoder readings) ---
     private DcMotor odoleft, odoright, odoperp;
-    private DcMotorEx flywheel;
     private Servo shooterHinge;
-    private CRServo intakeToShooter, intakeToShooter2;
+//    private CRServo intakeToShooter, intakeToShooter2;
     private Servo intake, intake2;
+
+    // ========== SHOOTER CONTROLLER - USING MotorPowerRegulator CLASS ==========
+    private MotorPowerRegulator shooterController;
 
     public static boolean intakeIn = false;
     public static boolean shooterActive = false;
@@ -51,7 +56,6 @@ public class teleOpCOMB extends LinearOpMode {
     public static double intake_position_in = 0.5;
     public static double intake_position_out = 0;
 
-    public static double flywheel_power = 1;
     public static double intakeToShooter_power = 0.5;
 
     // --- Odometry constants ---
@@ -71,51 +75,25 @@ public class teleOpCOMB extends LinearOpMode {
     public static boolean slow_mode = false;
     public static boolean robot_centric = true;
     public static boolean field_centric = false;
+    public static boolean use_back_motor_pid = false;  // Toggle for back motor PID control
     public static double kP = 0.01;      // Proportional control constant
     public static double maxPower = 0.2; // Maximum motor power (range: 0–1)
     public static int maxError = 100;
 
-    public static final double TICKS_PER_REV = 112.0;
-
-    // Motor spec: 6000 RPM no-load @ 12V
-    // MEASURED: 1400 RPM at full power with shooter attached
-    // This is your actual max - heavy shooter causes significant load
-    public static double MAX_RPM_UNDER_LOAD = 1400.0;  // Empirically determined
-
-    // ============= Controller Gains (Tune These) ============
-    // kV: At 1400 RPM, we want ~95% power (leaving 5% for PID correction)
-    // Calculation: kV = 0.95 / 1400 = 0.000678
-    public static double kV = 0.0006785714285714286;
-    public static double kS = 0.06;  // Static friction baseline
-
-    // PID gains - these should work well now that feedforward is correct
-    public static double kP_F = 0.0004;  // Proportional gain
-    public static double kI = 0.0002;  // Integral gain
-    public static double kD = 0.00005; // Derivative gain
-
-    // Anti-windup limit for integral term
-    public static double integralLimit = 0.2;
-
-    // ============= Internal State ============
-
-    private ElapsedTime dtTimer = new ElapsedTime();
-    private double lastPosition = 0.0;
-    private double integral = 0.0;
-    private double lastError = 0.0;
-
-    // Target shooter speed in RPM
-    public static double targetRPM = 980.0;
-    public static double currentRPM;
-    public static double error;
-    public static double output;
-    public static double ff;
-    public static double pid;
-
     public static double nerf = 0.75;
-    public static double frontnerf = 0.5;
-    public static double backnerf = 0.25;
 
     public static double idlePower = 0.25;
+
+    // Motor encoder constants for drive motors
+    public static double DRIVE_TICKS_PER_REV = 537.7;  // Adjust for your drive motors
+
+    // --- Button debouncing variables ---
+    private boolean lastGamepad1B = false;
+    private boolean lastGamepad1A = false;
+    private boolean lastGamepad1RightBumper = false;
+    private boolean lastGamepad2LeftBumper = false;
+    private boolean lastGamepad2A = false;
+    private boolean lastWheelBreakButtons = false;
 
     private double getBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
@@ -159,13 +137,13 @@ public class teleOpCOMB extends LinearOpMode {
         heading += dHeading;
     }
 
-    // The intake decision system - just one line!
+    // The intake decision system
     private ObeliskIntakeSystem intakeSystem;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
+//        telemetry.update();
 
         // Initialize your existing hardware
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontl");
@@ -176,27 +154,51 @@ public class teleOpCOMB extends LinearOpMode {
         odoleft = hardwareMap.get(DcMotor.class, "ol");
         odoright = hardwareMap.get(DcMotor.class, "or");
         odoperp = hardwareMap.get(DcMotor.class, "perp");
-        flywheel = hardwareMap.get(DcMotorEx.class, "s");
-        shooterHinge = hardwareMap.get(Servo.class, "sH");
-        intakeToShooter = hardwareMap.get(CRServo.class, "its");
-        intakeToShooter2 = hardwareMap.get(CRServo.class, "its2");
+//        shooterHinge = hardwareMap.get(Servo.class, "sH");
+//        intakeToShooter = hardwareMap.get(CRServo.class, "its");
+//        intakeToShooter2 = hardwareMap.get(CRServo.class, "its2");
         intake = hardwareMap.get(Servo.class, "i");
         intake2 = hardwareMap.get(Servo.class, "i2");
 
-        // Initialize the intake system - just one line!
+        // ========== INITIALIZE SHOOTER CONTROLLER ==========
+        shooterController = new MotorPowerRegulator(hardwareMap, telemetry, "s");
+
+        // Configure shooter parameters
+        shooterController.setTicksPerRev(112.0);
+        shooterController.setMaxRpmUnderLoad(1400.0);
+        shooterController.setTargetRPM(980.0);
+        shooterController.setAllGains(0.0006785714285714286, 0.06, 0.0004, 0.0002, 0.00005);
+
+        // ========== INITIALIZE BACK MOTOR CONTROLLERS =========================
+        backLeftController = new MotorPowerRegulator(hardwareMap, telemetry, "backl");
+        backRightController = new MotorPowerRegulator(hardwareMap, telemetry, "backr");
+
+        // Configure back motors
+        backLeftController.setTicksPerRev(DRIVE_TICKS_PER_REV);
+        backLeftController.setMaxRpmUnderLoad(300.0);  // Adjust based on your drive motors
+        backLeftController.setAllGains(0.00068, 0.06, 0.0004, 0.0002, 0.00005);
+
+        backRightController.setTicksPerRev(DRIVE_TICKS_PER_REV);
+        backRightController.setMaxRpmUnderLoad(300.0);
+        backRightController.setAllGains(0.00068, 0.06, 0.0004, 0.0002, 0.00005);
+
+        // ========== INITIALIZE INTAKE SYSTEM ==========
         intakeSystem = new ObeliskIntakeSystem(hardwareMap);
 
         // Check if it initialized properly
         if (!intakeSystem.isInitialized()) {
             telemetry.addData("ERROR", "Intake system failed to initialize!");
-            telemetry.update();
+//            telemetry.update();
         }
+
+        // Reset ball counter at start
+        intakeSystem.resetBallCounter();
 
         // --- Odometry encoder setup ---
         telemetry.addData("Before Reset - Left", odoleft.getCurrentPosition());
         telemetry.addData("Before Reset - Right", odoright.getCurrentPosition());
         telemetry.addData("Before Reset - Back", odoperp.getCurrentPosition());
-        telemetry.update();
+//        telemetry.update();
         sleep(1000);
 
         odoleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -219,12 +221,12 @@ public class teleOpCOMB extends LinearOpMode {
         telemetry.addData("After Reset - Left", prevLeft);
         telemetry.addData("After Reset - Right", prevRight);
         telemetry.addData("After Reset - Back", prevBack);
-        telemetry.update();
+//        telemetry.update();
         sleep(2000);
 
         // --- Motor directions ---
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -245,15 +247,9 @@ public class teleOpCOMB extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        dtTimer.reset();
-
         while (opModeIsActive()) {
-
-            handleIntake();
-            handleShooter();
 
             // ========== YOUR EXISTING DRIVE CODE ==========
             updateOdometry();
@@ -263,73 +259,84 @@ public class teleOpCOMB extends LinearOpMode {
             double LATdrive = -gamepad1.left_stick_x * nerf;
             double Turndrive = -gamepad1.right_stick_x * nerf;
 
+            // Determine if turning
+            boolean turning = Math.abs(Turndrive) > 0.1;
+
             TelemetryPacket packet = new TelemetryPacket();
 
-            if (gamepad1.a && robot_centric) {
-                robot_centric = false;
-                field_centric = true;
-                sleep(200);
-                packet.put("field centric testing", field_centric);
-                packet.put("robot centric testing", robot_centric);
-                telemetry.addData("Robot centric active", robot_centric);
-                telemetry.addData("Field centric active", field_centric);
-            }
-            else if (gamepad1.a && field_centric) {
-                field_centric = false;
-                robot_centric = true;
-                sleep(200);
-                packet.put("robot centric testing", robot_centric);
-                packet.put("field centric testing", field_centric);
-                telemetry.addData("Robot centric active", robot_centric);
-                telemetry.addData("Field centric active", field_centric);
+            // ========== FIXED: Toggle back motor PID mode with gamepad1.b (proper debouncing) ==========
+            if (gamepad1.b && !lastGamepad1B) {
+                use_back_motor_pid = !use_back_motor_pid;
+                telemetry.addLine(use_back_motor_pid ? "Back Motor PID: ON" : "Back Motor PID: OFF");
             }
 
+            lastGamepad1B = gamepad1.b;
+
+            // ========== FIXED: Toggle drive mode with gamepad1.a (proper debouncing) ==========
+            if (gamepad1.a && !lastGamepad1A) {
+                if (robot_centric) {
+                    robot_centric = false;
+                    field_centric = true;
+                    telemetry.addData("Robot centric active", robot_centric);
+                    telemetry.addData("Field centric active", field_centric);
+                } else if (field_centric) {
+                    field_centric = false;
+                    robot_centric = true;
+                    telemetry.addData("Robot centric active", robot_centric);
+                    telemetry.addData("Field centric active", field_centric);
+                }
+            }
+
+            lastGamepad1A = gamepad1.a;
+
+            packet.put("robot centric testing", robot_centric);
+            packet.put("field centric testing", field_centric);
             dashboard.sendTelemetryPacket(packet);
 
-            if (gamepad1.left_stick_button && gamepad1.right_stick_button && !wheelBreak) {
-                wheelBreak = true;
-                sleep(200);
+            // ========== FIXED: Wheel brake toggle (proper debouncing) ==========
+            boolean currentWheelBreakButtons = gamepad1.left_stick_button && gamepad1.right_stick_button;
 
-                frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (currentWheelBreakButtons && !lastWheelBreakButtons) {
+                wheelBreak = !wheelBreak;
 
-                frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                if (wheelBreak) {
+                    // Entering wheel brake mode
+                    frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-                frontLeftDrive.setTargetPosition(0);
-                frontRightDrive.setTargetPosition(0);
-                backLeftDrive.setTargetPosition(0);
-                backRightDrive.setTargetPosition(0);
+                    frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    frontLeftDrive.setTargetPosition(0);
+                    frontRightDrive.setTargetPosition(0);
+                    backLeftDrive.setTargetPosition(0);
+                    backRightDrive.setTargetPosition(0);
 
-                wheelBreakTargetFL = frontLeftDrive.getCurrentPosition();
-                wheelBreakTargetFR = frontRightDrive.getCurrentPosition();
-                wheelBreakTargetBL = backLeftDrive.getCurrentPosition();
-                wheelBreakTargetBR = backRightDrive.getCurrentPosition();
+                    frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            } else if (gamepad1.left_stick_button && gamepad1.right_stick_button && wheelBreak) {
-                wheelBreak = false;
-                sleep(200);
+                    wheelBreakTargetFL = frontLeftDrive.getCurrentPosition();
+                    wheelBreakTargetFR = frontRightDrive.getCurrentPosition();
+                    wheelBreakTargetBL = backLeftDrive.getCurrentPosition();
+                    wheelBreakTargetBR = backRightDrive.getCurrentPosition();
+                }
             }
+            lastWheelBreakButtons = currentWheelBreakButtons;
 
-            if(!slow_mode && gamepad1.right_bumper){
-                frontnerf = 0.1;
-                backnerf = 0.05;
-                slow_mode = true;
-            } else if (slow_mode && gamepad1.right_bumper) {
-                backnerf = 0.25;
-                frontnerf = 0.5;
-                slow_mode = false;
+            // ========== FIXED: Slow mode toggle (proper debouncing) ==========
+            if (gamepad1.right_bumper && !lastGamepad1RightBumper) {
+                slow_mode = !slow_mode;
+                nerf = slow_mode ? 0.1 : 0.75;
             }
+            lastGamepad1RightBumper = gamepad1.right_bumper;
 
+            // ========== DRIVE MODES ==========
             if (wheelBreak) {
                 applyWheelBrake(frontLeftDrive, wheelBreakTargetFL);
                 applyWheelBrake(frontRightDrive, wheelBreakTargetFR);
@@ -337,23 +344,67 @@ public class teleOpCOMB extends LinearOpMode {
                 applyWheelBrake(backRightDrive, wheelBreakTargetBR);
 
                 telemetry.addData("WHEEL BRAKE ACTIVE", "True");
-            } else if (!wheelBreak && robot_centric) {
+            }
+            // ========== BACK MOTOR PID MODE ==========
+            else if (!wheelBreak && robot_centric) {
+                // Set modes for PID control
                 frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                backLeftController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                backRightController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeftController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                backRightController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                backLeftDrive.setPower(Logdrive - LATdrive + Turndrive);
-                backRightDrive.setPower(-Logdrive + LATdrive + Turndrive);
+                // Get RPM from front motors
+                DcMotorEx frontLeftEx = (DcMotorEx) frontLeftDrive;
+                DcMotorEx frontRightEx = (DcMotorEx) frontRightDrive;
+
+                double frontLeftVelocity = frontLeftEx.getVelocity();
+                double frontRightVelocity = frontRightEx.getVelocity();
+
+                double frontLeftRPM = (frontLeftVelocity / DRIVE_TICKS_PER_REV) * 60.0;
+                double frontRightRPM = (frontRightVelocity / DRIVE_TICKS_PER_REV) * 60.0;
+
+                // Set front motor powers
                 frontLeftDrive.setPower(Logdrive + LATdrive + Turndrive);
                 frontRightDrive.setPower(-Logdrive - LATdrive + Turndrive);
-            }
 
+                // Match back motors to front motors with PID
+                if (!turning) {
+                    // Straight driving
+                    backLeftController.setTargetRPM(Math.abs(frontRightRPM));
+                    backRightController.setTargetRPM(Math.abs(frontLeftRPM));
+                } else {
+                    // Turning
+                    backLeftController.setTargetRPM(Math.abs(frontLeftRPM));
+                    backRightController.setTargetRPM(Math.abs(frontRightRPM));
+                }
+
+                // Update PID controllers
+                backLeftController.loop();
+                backRightController.loop();
+            }
+            // ========== NORMAL DRIVE MODE ==========
+//            else if (!wheelBreak && robot_centric) {
+//                frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//
+//                frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//                backLeftDrive.setPower(Logdrive - LATdrive + Turndrive);
+//                backRightDrive.setPower(-Logdrive + LATdrive + Turndrive);
+//                frontLeftDrive.setPower(Logdrive + LATdrive + Turndrive);
+//                frontRightDrive.setPower(-Logdrive - LATdrive + Turndrive);
+//            }
+            // ========== FIELD CENTRIC MODE ==========
             else if (!wheelBreak && field_centric) {
 
                 frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -396,27 +447,29 @@ public class teleOpCOMB extends LinearOpMode {
 
             handleIntake();
             handleShooter();
-            handleShooterHinge();
+//            handleShooterHinge();
 
-            // ========== OBELISK INTAKE SYSTEM INTEGRATION ==========
-            // Update the intake system
+            // ========== OBELISK INTAKE SYSTEM - JUST TWO LINES! ==========
+            // Update the system (detects obelisk and balls)
             intakeSystem.update();
 
-            // Control intake based on the decision
-//            if (intakeSystem.shouldPickup()) {
-//                intake.setPosition(1.0);  // Run intake
-//                intake2.setPosition(1.0);
-//            } else {
-//                intake.setPosition(0);  // Stop intake
-//                intake2.setPosition(0);
-//            }
-
             // --- Dashboard telemetry ---
-            sendDashboardTelemetry(batteryVoltage);
-            intakeSystem.sendTelemetry(telemetry);
-            telemetry.update();
+//            sendDashboardTelemetry(batteryVoltage);
+
+            // Intake system telemetry (just one line!)
+//            intakeSystem.sendTelemetry(telemetry);
+
+//            telemetry.update();
             sleep(20);
+            telemetry.addLine("=== BACK MOTORS ===");
+            telemetry.addData("Left Target", backLeftController.getTargetRPM());
+            telemetry.addData("Left Actual", backLeftController.getCurrentRPM());
+            telemetry.addData("Right Target", backRightController.getTargetRPM());
+            telemetry.addData("Right Actual", backRightController.getCurrentRPM());
         }
+
+        // Cleanup
+        intakeSystem.stop();
     }
 
     private void applyWheelBrake(DcMotor motor, int target) {
@@ -427,180 +480,148 @@ public class teleOpCOMB extends LinearOpMode {
         motor.setPower(power);
     }
 
+    // ========== FIXED: Proper button debouncing for intake toggle ==========
     private void handleIntake() {
-        if (gamepad2.left_bumper && !intakeIn) {
-            sleep(200);
-            intake.setPosition(intake_position_in);
-            intake2.setPosition(intake_position_in);
-            intakeIn = true;
-        } else if (gamepad2.left_bumper && intakeIn) {
-            sleep(200);
-            intake.setPosition(intake_position_out);
-            intake2.setPosition(intake_position_out);
-            intakeIn = false;
+        if (gamepad2.left_bumper && !lastGamepad2LeftBumper) {
+            intakeIn = !intakeIn;
+            intake.setPosition(intakeIn ? intake_position_in : intake_position_out);
+            intake2.setPosition(intakeIn ? intake_position_in : intake_position_out);
         }
+        lastGamepad2LeftBumper = gamepad2.left_bumper;
     }
 
     private void handleShooter() {
-        if (gamepad2.right_trigger > 0.2) {
-            double pos = flywheel.getCurrentPosition();
-            double dt = dtTimer.seconds();
-            intakeToShooter.setPower(intakeToShooter_power);
-            intakeToShooter2.setPower(intakeToShooter_power);
+        // ========== USING MotorPowerRegulator CLASS ==========
+        telemetry.addData("Right Trigger", gamepad2.right_trigger);
+        if (gamepad2.right_trigger >= 0.2) {
+            telemetry.addData("Actual RPM", shooterController.getCurrentRPM());
+            telemetry.addData("Target RPM", shooterController.getTargetRPM());
+            // Run intake-to-shooter servos
+//            intakeToShooter.setPower(intakeToShooter_power);
+//            intakeToShooter2.setPower(intakeToShooter_power);
 
-            if (dt < 0.001) dt = 0.001;
-            dtTimer.reset();
+            // Update the shooter controller (handles all PID+FF logic)
+//            shooterController.loop();
+            telemetry.addLine("Here");
+            shooterController.setTargetRPM(1400);
+            shooterController.loop();
+            shooterActive = true;
 
-            double deltaTicks = pos - lastPosition;
-            lastPosition = pos;
+        } else {
+            telemetry.addLine("Failed");
+            telemetry.addData("Actual RPM", shooterController.getCurrentRPM());
+            telemetry.addData("Target RPM", shooterController.getTargetRPM());
+            // Stop intake-to-shooter servos
+//            intakeToShooter.setPower(0);
+//            intakeToShooter2.setPower(0);
 
-            double velocityTicksPerSec = flywheel.getVelocity();
-            currentRPM = (velocityTicksPerSec / TICKS_PER_REV) * 60.0;
+            // Set shooter to idle
+            shooterController.stop();
+//            shooterController.setTargetRPM(500);
+//            shooterController.loop();
 
-            ff = 0.0;
-            if (targetRPM > 20) {
-                ff = kS + kV * targetRPM;
-            }
-
-            error = targetRPM - currentRPM;
-
-            integral += error * dt;
-            integral = Math.max(-integralLimit, Math.min(integralLimit, integral));
-
-            double derivative = (error - lastError) / dt;
-            lastError = error;
-
-            pid = kP_F * error + kI * integral + kD * derivative;
-
-            output = ff + pid;
-            output = Math.max(-1.0, Math.min(1.0, output));
-
-            flywheel.setPower(output);
-        }
-        else{
-            intakeToShooter.setPower(0);
-            intakeToShooter2.setPower(0);
-            flywheel.setPower(idlePower);
+            shooterActive = false;
         }
     }
 
-    private void handleShooterHinge() {
-        if (gamepad2.a) {
-            sleep(200);
-            shooterUp = !shooterUp;
-            shooterHinge.setPosition(shooterUp ? 1 : 0);
-        }
-    }
+    // ========== FIXED: Proper button debouncing for shooter hinge toggle ==========
+//    private void handleShooterHinge() {
+//        if (gamepad2.a && !lastGamepad2A) {
+//            shooterUp = !shooterUp;
+////            shooterHinge.setPosition(shooterUp ? 1 : 0);
+//        }
+//        lastGamepad2A = gamepad2.a;
+//    }
 
-    private void sendDashboardTelemetry(double batteryVoltage) {
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas canvas = packet.fieldOverlay();
+//    private void sendDashboardTelemetry(double batteryVoltage)
+//        TelemetryPacket packet = new TelemetryPacket();
+//        Canvas canvas = packet.fieldOverlay();
+//
+//        // --- Draw field grid ---
+//        canvas.setStroke("#404040");
+//        for (int i = -72; i <= 72; i += 24) {
+//            canvas.strokeLine(i, -72, i, 72);
+//            canvas.strokeLine(-72, i, 72, i);
+//        }
+//
+//        canvas.setStroke("#FFFFFF");
+//        canvas.strokeRect(-72, -72, 144, 144);
+//
+//        // Origin marker
+//        canvas.setStroke("#FFFF00");
+//        canvas.strokeLine(-10, 0, 10, 0);
+//        canvas.strokeLine(0, -10, 0, 10);
+//
+//        // Robot rectangle
+//        double robotSize = 18;
+//        canvas.setStroke("#3FBAFF");
+//        canvas.setFill("#3FBAFF");
+//        canvas.fillRect(xPos - robotSize / 2, yPos - robotSize / 2, robotSize, robotSize);
+//
+//        // Heading indicator
+//        double headingLineLength = 12;
+//        double headingX = xPos + headingLineLength * Math.cos(heading);
+//        double headingY = yPos + headingLineLength * Math.sin(heading);
+//        canvas.setStroke("#FF0000");
+//        canvas.setStrokeWidth(3);
+//        canvas.strokeLine(xPos, yPos, headingX, headingY);
+//
+//        // Center point
+//        canvas.setStroke("#00FF00");
+//        canvas.fillCircle(xPos, yPos, 3);
 
-        // --- Draw field grid ---
-        canvas.setStroke("#404040");
-        for (int i = -72; i <= 72; i += 24) {
-            canvas.strokeLine(i, -72, i, 72);
-            canvas.strokeLine(-72, i, 72, i);
-        }
+        // ========== TELEMETRY ==========
+//        packet.put("Wheel Brake Active", wheelBreak);
+//        packet.put("Back Motor PID Mode", use_back_motor_pid);
+//        packet.put("Shooter Active", shooterActive);
+//        packet.put("Shooter Hinge Position", shooterHinge.getPosition());
+//        packet.put("Robot X (in)", xPos);
+//        packet.put("Robot Y (in)", yPos);
+//        packet.put("Heading (rad)", heading);
+//        packet.put("Heading (deg)", Math.toDegrees(heading));
+//        packet.put("Nerf Speed", nerf);
+//        packet.put("Slow Mode", slow_mode);
+//        packet.put("Battery Voltage (V)", batteryVoltage);
+//
+//        // Shooter data
+//        packet.put("Shooter Target RPM", shooterController.getTargetRPM());
+//        packet.put("Shooter Actual RPM", shooterController.getCurrentRPM());
+//        packet.put("Shooter At Target", shooterController.isAtTarget(50));
 
-        canvas.setStroke("#FFFFFF");
-        canvas.strokeRect(-72, -72, 144, 144);
+        // Back motor data (if PID mode enabled)
+//        if (use_back_motor_pid) {
+//            packet.put("Back Left Target RPM", backLeftController.getTargetRPM());
+//            packet.put("Back Left Actual RPM", backLeftController.getCurrentRPM());
+//            packet.put("Back Right Target RPM", backRightController.getTargetRPM());
+//            packet.put("Back Right Actual RPM", backRightController.getCurrentRPM());
+//        }
+//
+//        packet.put("robot centric", robot_centric);
+//        packet.put("field centric", field_centric);
+//        packet.put("intake in", intakeIn);
+//        packet.put("shooter up", shooterUp);
 
-        // Origin marker
-        canvas.setStroke("#FFFF00");
-        canvas.strokeLine(-10, 0, 10, 0);
-        canvas.strokeLine(0, -10, 0, 10);
-
-        // Robot rectangle
-        double robotSize = 18;
-        canvas.setStroke("#3FBAFF");
-        canvas.setFill("#3FBAFF");
-        canvas.fillRect(xPos - robotSize / 2, yPos - robotSize / 2, robotSize, robotSize);
-
-        // Heading indicator
-        double headingLineLength = 12;
-        double headingX = xPos + headingLineLength * Math.cos(heading);
-        double headingY = yPos + headingLineLength * Math.sin(heading);
-        canvas.setStroke("#FF0000");
-        canvas.setStrokeWidth(3);
-        canvas.strokeLine(xPos, yPos, headingX, headingY);
-
-        // Center point
-        canvas.setStroke("#00FF00");
-        canvas.fillCircle(xPos, yPos, 3);
-
-        // Telemetry values
-        packet.put("Wheel Brake Active", wheelBreak);
-        packet.put("Shooter Active", shooterActive);
-        packet.put("Shooter Hinge Position", shooterHinge.getPosition());
-        packet.put("Robot X (in)", xPos);
-        packet.put("Robot Y (in)", yPos);
-        packet.put("Heading (rad)", heading);
-        packet.put("Heading (deg)", Math.toDegrees(heading));
-        packet.put("Front Left Encoder", frontLeftDrive.getCurrentPosition());
-        packet.put("Front Right Encoder", frontRightDrive.getCurrentPosition());
-        packet.put("Back Left Encoder", backLeftDrive.getCurrentPosition());
-        packet.put("Back Right Encoder", backRightDrive.getCurrentPosition());
-        packet.put("Odo Left Raw", -odoleft.getCurrentPosition());
-        packet.put("Odo Right Raw", odoright.getCurrentPosition());
-        packet.put("Odo Back Raw", odoperp.getCurrentPosition());
-        packet.put("Nerf Speed", 0.5);
-        packet.put("Slow Mode", slow_mode);
-        packet.put("Battery Voltage (V)", batteryVoltage);
-        packet.put("GE", true);
-        packet.put("ITS", intakeToShooter.getPower());
-        packet.put("ITS2", intakeToShooter2.getPower());
-        packet.put("Target RPM", targetRPM);
-        packet.put("Actual RPM", currentRPM);
-        packet.put("Error RPM", error);
-        packet.put("Error %", (error / targetRPM) * 100.0);
-        packet.put("Total Power", output);
-        packet.put("FF Power", ff);
-        packet.put("PID Power", pid);
-        packet.put("Integral", integral);
-        packet.put("robot centric", robot_centric);
-        packet.put("field centric", field_centric);
-        packet.put("intake in", intakeIn);
-        packet.put("shooter up", shooterUp);
-        packet.put("slow mode", slow_mode);
-        packet.put("wheel break", wheelBreak);
-
-        dashboard.sendTelemetryPacket(packet);
+//
 
         // Driver Station telemetry
-        telemetry.addData("Wheel Brake Active", wheelBreak);
-        telemetry.addData("Shooter Active", shooterActive);
-        telemetry.addData("Shooter Hinge Position", shooterHinge.getPosition());
-        telemetry.addData("Robot X (in)", xPos);
-        telemetry.addData("Robot Y (in)", yPos);
-        telemetry.addData("Heading (rad)", heading);
-        telemetry.addData("Heading (deg)", Math.toDegrees(heading));
-        telemetry.addData("Front Left Encoder", frontLeftDrive.getCurrentPosition());
-        telemetry.addData("Front Right Encoder", frontRightDrive.getCurrentPosition());
-        telemetry.addData("Back Left Encoder", backLeftDrive.getCurrentPosition());
-        telemetry.addData("Back Right Encoder", backRightDrive.getCurrentPosition());
-        telemetry.addData("Odo Left Raw", -odoleft.getCurrentPosition());
-        telemetry.addData("Odo Right Raw", odoright.getCurrentPosition());
-        telemetry.addData("Odo Back Raw", odoperp.getCurrentPosition());
-        telemetry.addData("Nerf Speed", 0.5);
-        telemetry.addData("Slow Mode", slow_mode);
-        telemetry.addData("Battery Voltage (V)", batteryVoltage);
-        telemetry.addData("GE", true);
-        telemetry.addData("ITS", intakeToShooter.getPower());
-        telemetry.addData("ITS2", intakeToShooter2.getPower());
-        telemetry.addData("Target RPM", targetRPM);
-        telemetry.addData("Actual RPM", currentRPM);
-        telemetry.addData("Error RPM", error);
-        telemetry.addData("Error %", (error / targetRPM) * 100.0);
-        telemetry.addData("Total Power", output);
-        telemetry.addData("FF Power", ff);
-        telemetry.addData("PID Power", pid);
-        telemetry.addData("Integral", integral);
-        telemetry.addData("robot centric", robot_centric);
-        telemetry.addData("field centric", field_centric);
-        telemetry.addData("intake in", intakeIn);
-        telemetry.addData("shooter up", shooterUp);
-        telemetry.addData("slow mode", slow_mode);
-        telemetry.addData("wheel break", wheelBreak);
-    }
+//        telemetry.addData("Wheel Brake Active", wheelBreak);
+//        telemetry.addData("Back Motor PID", use_back_motor_pid ? "ON" : "OFF");
+//        telemetry.addData("Shooter Active", shooterActive);
+//        telemetry.addData("Target RPM", shooterController.getTargetRPM());
+//        telemetry.addData("Actual RPM", shooterController.getCurrentRPM());
+//        telemetry.addData("At Target?", shooterController.isAtTarget(50) ? "✓" : "✗");
+//        telemetry.addData("Battery (V)", batteryVoltage);
+//        telemetry.addData("Robot Centric", robot_centric);
+//        telemetry.addData("Field Centric", field_centric);
+//
+//        if (use_back_motor_pid) {
+//          telemetry.addLine();
+//        telemetry.addLine("=== BACK MOTORS ===");
+//        telemetry.addData("Left Target", backLeftController.getTargetRPM());
+//        telemetry.addData("Left Actual", backLeftController.getCurrentRPM());
+//        telemetry.addData("Right Target", backRightController.getTargetRPM());
+//        telemetry.addData("Right Actual", backRightController.getCurrentRPM());
+
+//
+//        telemetry.addData("")
 }

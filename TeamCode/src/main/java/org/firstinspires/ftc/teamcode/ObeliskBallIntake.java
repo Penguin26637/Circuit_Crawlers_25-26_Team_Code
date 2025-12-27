@@ -133,10 +133,10 @@ public class ObeliskBallIntake extends LinearOpMode {
         while (opModeIsActive()) {
             
             // Step 1: Detect Obelisk Pattern (periodically)
-            if (huskyRateLimit.hasExpired()) {
-                detectObeliskPattern();
-                huskyRateLimit.reset();
-            }
+//            if (huskyRateLimit.hasExpired()) {
+//                detectObeliskPattern();
+//                huskyRateLimit.reset();
+//            }
             
             // Step 2: Configure camera controls
             configureCameraControls();

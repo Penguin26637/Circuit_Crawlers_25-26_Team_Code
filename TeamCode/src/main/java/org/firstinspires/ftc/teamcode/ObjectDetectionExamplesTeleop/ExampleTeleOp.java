@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntak
  * 
  * This demonstrates how to integrate the intake system into your existing TeleOp code
  */
-@TeleOp(name = "TeleOp with Intake System", group = "Examples")
+@TeleOp(name = "TeleOp with Intake Systemasdf", group = "Examples")
 public class ExampleTeleOp extends LinearOpMode {
     
     // Your existing robot hardware
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
-    private DcMotor intakeMotor;
+//    private DcMotor leftDrive;
+//    private DcMotor rightDrive;
+//    private DcMotor intakeMotor;
     
     // The intake decision system - just one line!
     private ObeliskIntakeSystem intakeSystem;
@@ -25,9 +25,9 @@ public class ExampleTeleOp extends LinearOpMode {
     public void runOpMode() {
         
         // Initialize your existing hardware
-        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+//        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
+//        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+//        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         
         // Initialize the intake system - just one line!
         intakeSystem = new ObeliskIntakeSystem(hardwareMap);
@@ -37,6 +37,7 @@ public class ExampleTeleOp extends LinearOpMode {
             telemetry.addData("ERROR", "Intake system failed to initialize!");
             telemetry.update();
         }
+        intakeSystem.resetBallCounter();
         
         telemetry.addData("Status", "Ready to start!");
         telemetry.update();
@@ -46,36 +47,37 @@ public class ExampleTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             
             // ========== YOUR EXISTING DRIVE CODE ==========
-            double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
-            
-            leftDrive.setPower(drive + turn);
-            rightDrive.setPower(drive - turn);
+//            double drive = -gamepad1.left_stick_y;
+//            double turn = gamepad1.right_stick_x;
+//
+//            leftDrive.setPower(drive + turn);
+//            rightDrive.setPower(drive - turn);
             
             // ========== INTAKE SYSTEM - JUST TWO LINES! ==========
             
             // Update the system (detects obelisk and balls)
             intakeSystem.update();
+
             
             // Control intake based on the decision
             if (intakeSystem.shouldPickup()) {
-                intakeMotor.setPower(1.0);  // Run intake
+                telemetry.addLine("intake");
             } else {
-                intakeMotor.setPower(0.0);  // Stop or reverse intake
+                telemetry.addLine("intake");
             }
             
-            // Optional: Manual override with gamepad button
-            if (gamepad1.a) {
-                intakeMotor.setPower(1.0);  // Force intake on
-            } else if (gamepad1.b) {
-                intakeMotor.setPower(-1.0); // Force reverse
-            }
+//            // Optional: Manual override with gamepad button
+//            if (gamepad1.a) {
+//                intakeMotor.setPower(1.0);  // Force intake on
+//            } else if (gamepad1.b) {
+//                intakeMotor.setPower(-1.0); // Force reverse
+//            }
             
             // ========== TELEMETRY ==========
             
             // Your existing telemetry
-            telemetry.addData("Drive", "%.2f", drive);
-            telemetry.addData("Turn", "%.2f", turn);
+//            telemetry.addData("Drive", "%.2f", drive);
+//            telemetry.addData("Turn", "%.2f", turn);
             
             // Intake system telemetry (just one line!)
             intakeSystem.sendTelemetry(telemetry);
