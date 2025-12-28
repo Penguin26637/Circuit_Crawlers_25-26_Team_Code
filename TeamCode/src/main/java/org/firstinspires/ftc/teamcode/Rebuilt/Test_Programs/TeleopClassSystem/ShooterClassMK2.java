@@ -56,6 +56,10 @@ public class ShooterClassMK2 {
     public String hinge1Type = "none";  // "servo", "crservo", "motor", or "none"
     public String hinge2Type = "none";
 
+
+
+//    spindexer servo, remove the hinges, outtake flipper Hinge? ,
+//    These are the changes brandon is making me do because he is mean and wants to redesign everything
     /**
      * Constructor with flexible magazine types
      * @param initShooter Initialize shooter motor
