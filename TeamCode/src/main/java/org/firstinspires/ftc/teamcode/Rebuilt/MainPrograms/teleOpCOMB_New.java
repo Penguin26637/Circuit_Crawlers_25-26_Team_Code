@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * TeleOp that uses the MotorPowerRegulator_New class for shooter control and back motor PID
  * DEBUGGED VERSION - Fixed button debouncing and logic issues
  */
-@TeleOp(name = "TeleOp Comb (Debugged)", group = "Examples")
+@TeleOp(name = "TeleOp Comb (Debugged)_New", group = "Examples")
 @Config
 public class teleOpCOMB_New extends LinearOpMode {
 

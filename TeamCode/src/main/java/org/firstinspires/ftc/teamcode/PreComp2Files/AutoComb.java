@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
+import org.firstinspires.ftc.teamcode.PreComp2Files.ObjectDetectionExamplesTeleop.ObeliskIntakeSystem;
+
 
 /**
  * Autonomous program with simple function calls for all robot actions
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.ObjectDetectionExamplesTeleop.ObeliskIntak
  *   intake("out");     // Retract intake
  *   drive(24, 0.5);    // Drive forward 24 inches at 50% power
  */
-@Autonomous(name = "Auto Comb", group = "Auto")
+@Autonomous(name = "Auto Comb_2", group = "Auto")
 public class AutoComb extends LinearOpMode {
 
     // --- Drive motors ---

@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="DriverPractice", group="Drive Train")
-public class DriverPractice extends LinearOpMode {
+@TeleOp(name="DriverPractice_New", group="Drive Train")
+public class DriverPractice_New extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;

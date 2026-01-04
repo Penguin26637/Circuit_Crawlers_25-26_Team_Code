@@ -49,12 +49,12 @@ public class ShooterClassMK2 {
     public boolean hingeInitialized = false;
 
     // Magazine type tracking - Public
-    public String magazine1Type = "none";  // "servo", "crservo", "motor", or "none"
-    public String magazine2Type = "none";
-    public String magazine3Type = "none";
-    public String magazine4Type = "none";
-    public String hinge1Type = "none";  // "servo", "crservo", "motor", or "none"
-    public String hinge2Type = "none";
+    public String magazine1Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public String magazine2Type = "crservo";
+    public String magazine3Type = "crservo";
+    public String magazine4Type = "crservo";
+    public String hinge1Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public String hinge2Type = "servo";
 
 
 
@@ -205,7 +205,7 @@ public class ShooterClassMK2 {
                 }
             } catch (Exception e) {
                 magazine3Initialized = false;
-                telemetry.addData("Magazine 4 Error", e.getMessage());
+                telemetry.addData("Magazine 3 Error", e.getMessage());
             }
         }
         if (!initMag4Type.equals("none")) {

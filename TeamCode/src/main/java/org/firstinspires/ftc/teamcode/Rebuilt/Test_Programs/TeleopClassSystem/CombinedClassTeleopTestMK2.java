@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * ALL variables are controlled from here
  * Classes only handle HOW variables interact, not WHAT values they have
  */
-@TeleOp(name = "Combined Class Teleop Test", group = "Main")
+@TeleOp(name = "Combined Class Teleop Test MK2", group = "Main")
 @Config
 public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
@@ -34,8 +34,8 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     // Magazine configuration
     public static boolean magazineAttached = false;
     public static boolean shooterHingeAttached = false;
-    public static String magazine1Type = "crservo";  // "servo", "crservo", "motor", or "none"
-    public static String magazine2Type = "crservo";  // "servo", "crservo", "motor", or "none
+    public static String magazine1Type = "none";  // "servo", "crservo", "motor", or "none"
+    public static String magazine2Type = "none";  // "servo", "crservo", "motor", or "none
     public static String magazine3Type = "crservo";  // "servo", "crservo", "motor", or "none"
     public static String magazine4Type = "crservo";  // "servo", "crservo", "motor", or "none"
 
