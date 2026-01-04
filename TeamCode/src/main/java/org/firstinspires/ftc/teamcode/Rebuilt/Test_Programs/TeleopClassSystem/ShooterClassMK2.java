@@ -35,16 +35,16 @@ public class ShooterClassMK2 {
     public double magazineTargetPosition = 0;   // For regular servos (0-1)
 
     // Component status - Public
-    public boolean shooterEnabled = false;
+    public boolean shooterEnabled = true;
     public boolean hingeEnabled = false;
     public boolean magazineEnabled = false;
     public boolean shooterInitialized = false;
-    public boolean hinge1Initialized = false;
-    public boolean hinge2Initialized = false;
-    public boolean magazine1Initialized = false;
-    public boolean magazine2Initialized = false;
-    public boolean magazine3Initialized = false;
-    public boolean magazine4Initialized = false;
+    public boolean hinge1Initialized = true;
+    public boolean hinge2Initialized = true;
+    public boolean magazine1Initialized = true;
+    public boolean magazine2Initialized = true;
+    public boolean magazine3Initialized = true;
+    public boolean magazine4Initialized = true;
     public boolean magazineInitialized = false;
     public boolean hingeInitialized = false;
 

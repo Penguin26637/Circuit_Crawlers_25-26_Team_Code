@@ -76,7 +76,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     private IntakeClass intake;
     private ShooterClassMK2 shooter;
     private OdometryClass odometry;
-    private TelemetryClass telem;
+    private TelemetryClassMK2 telem;
 
     // ========== BUTTON DEBOUNCING ==========
     private boolean lastGamepad1A = false;
@@ -99,6 +99,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
 
+
         // ========== INITIALIZE CLASSES ==========
         drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
@@ -107,21 +108,20 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
         }
 
         if (shooterAttached || shooterHingeAttached || magazineAttached) {
-            shooter = new ShooterClassMK2(hardwareMap, telemetry,
-                    shooterAttached, shooterHinge1Type, shooterHinge2Type, magazine1Type, magazine2Type, magazine3Type, magazine4Type);
+            shooter = new ShooterClassMK2(hardwareMap, telemetry, shooterAttached, shooterHinge1Type, shooterHinge2Type, magazine1Type, magazine2Type, magazine3Type, magazine4Type);
         }
 
         if (OdometryAttached) {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-//        telem = new TelemetryClass(telemetry, hardwareMap);
-//
-//        // Link classes to telemetry
-//        telem.drive = drive;
-//        telem.intake = intake;
+        telem = new TelemetryClassMK2(telemetry, hardwareMap, shooter);
+
+        // Link classes to telemetry
+        telem.drive = drive;
+        telem.intake = intake;
 //        telem.shooter = shooter;
-//        telem.odometry = odometry;
+        telem.odometry = odometry;
 
         // Set initial states in classes
         drive.nerf = slowModeActive ? slowSpeed : normalSpeed;
@@ -151,8 +151,11 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             if (!magazine4Type.equals("none")) telemetry.addData("Mag 4", shooter.getMagazine4Initialized() ? "✓" : "✗");
         }
         if (shooterHingeAttached) {
-            if (!shooterHinge1Type.equals("none")) telemetry.addData("Hinge 1", shooter.getHinge1Initialized() ? "✓" : "✗");
-            if (!shooterHinge2Type.equals("none")) telemetry.addData("Hinge 2", shooter.getHinge1Initialized() ? "✓" : "✗");
+            if (!shooterHinge1Type.equals("none"))
+                telemetry.addData("Hinge 1", shooter.getHinge1Initialized() ? "✓" : "✗");
+            if (!shooterHinge2Type.equals("none"))
+                telemetry.addData("Hinge 2", shooter.getHinge1Initialized() ? "✓" : "✗");
+        }
         if (OdometryAttached) telemetry.addData("Odometry", odometry.getInitialized() ? "✓" : "✗");
         telemetry.update();
 
@@ -299,7 +302,6 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             telem.update(TelemetryEnabled, DashboardEnabled);
 
             sleep(20);
-            }
         }
     }
 }
