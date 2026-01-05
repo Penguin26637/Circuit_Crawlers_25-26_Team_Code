@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.TeleopClassSystem;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -65,7 +66,7 @@ public class DriveControlClass {
 
                 frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
                 frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-                backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+                backLeftDrive.setDirection(DcMotor.Direction.REVERSE);  // FIXED: Changed from FORWARD to REVERSE
                 backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
                 frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -173,6 +174,12 @@ public class DriveControlClass {
         backLeftController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backRightController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -216,6 +223,11 @@ public class DriveControlClass {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
         backLeftDrive.setPower(forward - strafe + turn);
         backRightDrive.setPower(-forward + strafe + turn);
         frontLeftDrive.setPower(forward + strafe + turn);
@@ -237,6 +249,11 @@ public class DriveControlClass {
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Rotate movement vector
         double rotX = strafe * Math.cos(-heading) - forward * Math.sin(-heading);
@@ -285,6 +302,11 @@ public class DriveControlClass {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
         double rotX = strafe * Math.cos(-heading) - forward * Math.sin(-heading);
         double rotY = strafe * Math.sin(-heading) + forward * Math.cos(-heading);
         rotX = rotX * 1.1;
@@ -296,7 +318,7 @@ public class DriveControlClass {
         double backRightPower = (rotY + rotX - turn) / denominator;
 
         frontLeftDrive.setPower(frontLeftPower);
-        backLeftDrive.setPower(backLeftPower);
+        backLeftDrive.setPower(backLeftPower);  // No negation needed - direction set in constructor
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
     }

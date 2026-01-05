@@ -95,12 +95,12 @@ public class ShooterClassMK2 {
                     hinge1Servo.setPosition(0);
                     hinge1Type = "servo";
                     hinge1Initialized = true;
-                } else if (initMag1Type.equals("crservo")) {
+                } else if (initHinge1Type.equals("crservo")) {
                     hinge1CRservo = hardwareMap.get(CRServo.class, "hinge1");
                     hinge1CRservo.setPower(0);
                     hinge1Type = "crservo";
                     hinge1Initialized = true;
-                } else if (initMag1Type.equals("motor")) {
+                } else if (initHinge1Type.equals("motor")) {
                     hinge1Motor = hardwareMap.get(DcMotor.class, "hinge1");
                     hinge1Motor.setPower(0);
                     hinge1Type = "motor";
@@ -118,12 +118,12 @@ public class ShooterClassMK2 {
                     hinge2Servo.setPosition(0);
                     hinge2Type = "servo";
                     hinge2Initialized = true;
-                } else if (initMag2Type.equals("crservo")) {
+                } else if (initHinge2Type.equals("crservo")) {
                     hinge2CRservo = hardwareMap.get(CRServo.class, "hinge2");
                     hinge2CRservo.setPower(0);
                     hinge2Type = "crservo";
                     hinge2Initialized = true;
-                } else if (initMag2Type.equals("motor")) {
+                } else if (initHinge2Type.equals("motor")) {
                     hinge2Motor = hardwareMap.get(DcMotor.class, "hinge2");
                     hinge2Motor.setPower(0);
                     hinge2Type = "motor";

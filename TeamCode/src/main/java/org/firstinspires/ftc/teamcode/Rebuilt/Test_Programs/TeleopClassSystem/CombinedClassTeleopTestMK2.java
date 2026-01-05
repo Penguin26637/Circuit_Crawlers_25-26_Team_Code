@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * ALL variables are controlled from here
  * Classes only handle HOW variables interact, not WHAT values they have
  */
-@TeleOp(name = "Combined Class Teleop Test MK2", group = "Main")
+@TeleOp(name = "Combined Class Teleop Test MK2 .java", group = "Main")
 @Config
 public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
@@ -26,24 +26,24 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     public static String intake2Type = "servo";  // "servo", "crservo", "motor", or "none"
 
     // Shooter components
-    public static boolean shooterAttached = false;
+    public static boolean shooterAttached = true;
     public static boolean shooterHinge1Attached = false;
     public static boolean shooterHinge2Attached = false;
 
 
     // Magazine configuration
-    public static boolean magazineAttached = false;
-    public static boolean shooterHingeAttached = false;
-    public static String magazine1Type = "none";  // "servo", "crservo", "motor", or "none"
-    public static String magazine2Type = "none";  // "servo", "crservo", "motor", or "none
+    public static boolean magazineAttached = true;
+    public static boolean shooterHingeAttached = true;
+    public static String magazine1Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public static String magazine2Type = "crservo";  // "servo", "crservo", "motor", or "none
     public static String magazine3Type = "crservo";  // "servo", "crservo", "motor", or "none"
     public static String magazine4Type = "crservo";  // "servo", "crservo", "motor", or "none"
 
     public static String shooterHinge1Type = "crservo";  // "servo", "crservo", "motor", or "none"
-    public static String shooterHinge2Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public static String shooterHinge2Type = "servo";  // "servo", "crservo", "motor", or "none"
 
     // Other subsystems
-    public static boolean OdometryAttached = true;
+    public static boolean OdometryAttached = false;
     public static boolean TelemetryEnabled = true;
     public static boolean DashboardEnabled = true;
 
@@ -97,6 +97,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initializing...");
+//        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
 
 
@@ -215,6 +216,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
                     drive.initWheelBrake();  // Initialize brake targets
                 }
             }
+
             lastGamepad1BothSticks = bothSticks;
 
             // Reset IMU (Start button)
@@ -276,13 +278,13 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
                 // Toggle hinge (A button) - only if hinge attached
                 if (shooterHingeAttached) {
-                    if (gamepad2.right_trigger >= 0.2) {
+                    if (gamepad2.left_trigger >= 0.2) {
                         // Set both - class will use the right one based on type
-                        shooter.magazineTargetPower = magazineActivePower;
-                        shooter.magazineTargetPosition = 1.0;  // For regular servos
+                        shooter.hingeTargetPower = 1.0;
+//                        shooter.hingeTargetPower = 1.0;  // For regular servos
                     } else {
-                        shooter.magazineTargetPower = 0;
-                        shooter.magazineTargetPosition = 0;
+                        shooter.hingeTargetPower = 0;
+                        shooter.hingeTargetPosition = 0;
                     }
                 }
 
