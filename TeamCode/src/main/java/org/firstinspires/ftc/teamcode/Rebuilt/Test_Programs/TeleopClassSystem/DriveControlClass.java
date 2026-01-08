@@ -65,8 +65,8 @@ public class DriveControlClass {
                 backRightDrive = hardwareMap.get(DcMotor.class, "backr");
 
                 frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-                frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-                backLeftDrive.setDirection(DcMotor.Direction.REVERSE);  // FIXED: Changed from FORWARD to REVERSE
+                frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+                backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
                 backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
                 frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -174,10 +174,10 @@ public class DriveControlClass {
         backLeftController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backRightController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -195,7 +195,7 @@ public class DriveControlClass {
         double frontRightRPM = (frontRightVelocity / DRIVE_TICKS_PER_REV) * 60.0;
 
         frontLeftDrive.setPower(forward + strafe + turn);
-        frontRightDrive.setPower(-forward - strafe + turn);
+        frontRightDrive.setPower(forward + strafe + turn);
 
         if (!turning) {
             backLeftController.setTargetRPM(Math.abs(frontRightRPM));
@@ -228,10 +228,10 @@ public class DriveControlClass {
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        backLeftDrive.setPower(forward - strafe + turn);
-        backRightDrive.setPower(-forward + strafe + turn);
+//        backLeftDrive.setPower(forward + strafe + turn);
+//        backRightDrive.setPower(forward + strafe + turn);
         frontLeftDrive.setPower(forward + strafe + turn);
-        frontRightDrive.setPower(-forward - strafe + turn);
+//        frontRightDrive.setPower(forward + strafe + turn);
     }
 
     /**
