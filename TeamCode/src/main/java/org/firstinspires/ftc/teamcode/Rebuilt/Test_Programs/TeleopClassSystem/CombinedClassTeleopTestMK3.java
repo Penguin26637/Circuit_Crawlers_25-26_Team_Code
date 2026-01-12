@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 /**
- * CombinedClassTeleopTest - Main control hub
+ * CombinedClassTeleopTest MK3 - Main control hub
  * ALL variables are controlled from here
  * Classes only handle HOW variables interact, not WHAT values they have
+ * Added spindexer and flipper servos
  */
-@TeleOp(name = "Combined Class Teleop Test MK2 .java", group = "Main")
+@TeleOp(name = "Combined Class Teleop Test MK3 .java", group = "Main")
 @Config
-public class CombinedClassTeleopTestMK2 extends LinearOpMode {
+public class CombinedClassTeleopTestMK3 extends LinearOpMode {
 
     // ========== ENABLE/DISABLE FLAGS ==========
     // Drive components
@@ -22,8 +23,8 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
     // Intake configuration
     public static boolean IntakeAttached = false;
-    public static String intake1Type = "servo";  // "servo", "crservo", "motor", or "none"
-    public static String intake2Type = "servo";  // "servo", "crservo", "motor", or "none"
+    public static String intake1Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public static String intake2Type = "crservo";  // "servo", "crservo", "motor", or "none"
 
     // Shooter components
     public static boolean shooterAttached = true;
@@ -31,13 +32,18 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     // Magazine configuration
     public static boolean magazineAttached = false;
     public static boolean shooterHingeAttached = false;
-    public static String magazine1Type = "crservo";  // "servo", "crservo", "motor", or "none"
-    public static String magazine2Type = "crservo";  // "servo", "crservo", "motor", or "none
-    public static String magazine3Type = "crservo";  // "servo", "crservo", "motor", or "none"
-    public static String magazine4Type = "crservo";  // "servo", "crservo", "motor", or "none"
+    public static boolean spindexerAttached = false;
+    public static boolean flipperAttached = false;
+    public static String magazine1Type = "none";  // "servo", "crservo", "motor", or "none"
+    public static String magazine2Type = "none";  // "servo", "crservo", "motor", or "none
+    public static String magazine3Type = "none";  // "servo", "crservo", "motor", or "none"
+    public static String magazine4Type = "none";  // "servo", "crservo", "motor", or "none"
 
-    public static String shooterHinge1Type = "crservo";  // "servo", "crservo", "motor", or "none"
-    public static String shooterHinge2Type = "servo";  // "servo", "crservo", "motor", or "none"
+    public static String shooterHinge1Type = "none";  // "servo", "crservo", "motor", or "none"
+    public static String shooterHinge2Type = "none";  // "servo", "crservo", "motor", or "none"
+
+    public static String spindexerType = "crservo";  // "servo", "crservo", "motor", or "none"
+    public static String flipperType = "servo";  // "servo", "crservo", "motor", or "none"
 
     // Other subsystems
     public static boolean OdometryAttached = false;
@@ -58,17 +64,27 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     public static double intakeOutPosition = 0;
 
     // ========== SHOOTER CONFIGURATION ==========
-    public static double shooterActiveRPM = 1400;
+    public static double shooterActiveRPM = 600;
     public static double shooterIdleRPM = 0;
     public static double magazineActivePower = 0.5;
+
+    // ========== SPINDEXER CONFIGURATION ==========
+    public static double spindexerActivePosition = 0.5;
+    public static double spindexerIdlePosition = 0;
+    public static double spindexerActivePower = 1.0;
+
+    // ========== FLIPPER CONFIGURATION ==========
+    public static double flipperActivePosition = 0.2;
+    public static double flipperIdlePosition = 0;
+    public static double flipperActivePower = 1.0;
 
 
     // ========== CLASS INSTANCES ==========
     private DriveControlClass drive;
     private IntakeClass intake;
-    private ShooterClassMK2 shooter;
+    private ShooterClassMK3 shooter;
     private OdometryClass odometry;
-    private TelemetryClassMK2 telem;
+    private TelemetryClassMK3 telem;
 
     // ========== BUTTON DEBOUNCING ==========
     private boolean lastGamepad1A = false;
@@ -78,7 +94,6 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     private boolean lastGamepad1BothSticks = false;
     private boolean lastGamepad1Start = false;
     private boolean lastGamepad2A = false;
-    private boolean lastGamepad2LeftBumper = false;
 
     // ========== STATE VARIABLES (controlled here, not in classes) ==========
     private boolean slowModeActive = startInSlowMode;
@@ -92,20 +107,28 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 //        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
 
-        if (intake1Type != "none" || intake2Type != "none"){
+        if (!intake1Type.equals("none") || !intake2Type.equals("none")){
             IntakeAttached = true;}
         else {IntakeAttached = false;}
-        if (magazine1Type != "none" || magazine2Type != "none" || magazine3Type != "none" || magazine4Type != "none"){
+        if (!magazine1Type.equals("none") || !magazine2Type.equals("none") || !magazine3Type.equals("none") || !magazine4Type.equals("none")){
             magazineAttached = true;
         }
         else {magazineAttached = false;}
-        if (shooterHinge1Type != "none" || shooterHinge2Type != "none") {
+        if (!shooterHinge1Type.equals("none") || !shooterHinge2Type.equals("none")) {
             shooterHingeAttached = true;}
         else {shooterHingeAttached = false;}
+        if (!spindexerType.equals("none")) {
+            spindexerAttached = true;}
+        else {spindexerAttached = false;}
+        if (!flipperType.equals("none")) {
+            flipperAttached = true;}
+        else {flipperAttached = false;}
 
         telemetry.addData("IntakeAttached", IntakeAttached);
         telemetry.addData("Mag attached", magazineAttached);
         telemetry.addData("shooter hinge attached", shooterHingeAttached);
+        telemetry.addData("spindexer attached", spindexerAttached);
+        telemetry.addData("flipper attached", flipperAttached);
         // ========== INITIALIZE CLASSES ==========
         drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
@@ -114,20 +137,22 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             intake = new IntakeClass(hardwareMap, telemetry, intake1Type, intake2Type);
         }
 
-        if (shooterAttached || shooterHingeAttached || magazineAttached) {
-            shooter = new ShooterClassMK2(hardwareMap, telemetry, shooterAttached, shooterHinge1Type, shooterHinge2Type, magazine1Type, magazine2Type, magazine3Type, magazine4Type);
+        if (shooterAttached || shooterHingeAttached || magazineAttached || spindexerAttached || flipperAttached) {
+            shooter = new ShooterClassMK3(hardwareMap, telemetry, shooterAttached, shooterHinge1Type, shooterHinge2Type,
+                    magazine1Type, magazine2Type, magazine3Type, magazine4Type,
+                    spindexerType, flipperType);
         }
 
         if (OdometryAttached) {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-        telem = new TelemetryClassMK2(telemetry, hardwareMap, shooter);
+        telem = new TelemetryClassMK3(telemetry, hardwareMap, shooter);
 
         // Link classes to telemetry
         telem.drive = drive;
         telem.intake = intake;
-//        telem.shooter = shooter;
+        telem.shooter = shooter;
         telem.odometry = odometry;
 
         // Set initial states in classes
@@ -161,7 +186,15 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             if (!shooterHinge1Type.equals("none"))
                 telemetry.addData("Hinge 1", shooter.getHinge1Initialized() ? "✓" : "✗");
             if (!shooterHinge2Type.equals("none"))
-                telemetry.addData("Hinge 2", shooter.getHinge1Initialized() ? "✓" : "✗");
+                telemetry.addData("Hinge 2", shooter.getHinge2Initialized() ? "✓" : "✗");
+        }
+        if (spindexerAttached) {
+            if (!spindexerType.equals("none"))
+                telemetry.addData("Spindexer", shooter.getSpindexerInitialized() ? "✓" : "✗");
+        }
+        if (flipperAttached) {
+            if (!flipperType.equals("none"))
+                telemetry.addData("Flipper", shooter.getFlipperInitialized() ? "✓" : "✗");
         }
         if (OdometryAttached) telemetry.addData("Odometry", odometry.getInitialized() ? "✓" : "✗");
         telemetry.update();
@@ -245,21 +278,29 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
             // ========== INTAKE CONTROL ==========
             if (IntakeAttached) {
-                // Toggle intake (Left Bumper)
-                if (gamepad2.left_bumper && !lastGamepad2LeftBumper) {
-                    intakeIsIn = !intakeIsIn;
-                    // Set both position and power - class will use the right one based on type
-                    intake.targetPosition = intakeIsIn ? intakeInPosition : intakeOutPosition;
-                    intake.targetPower = intakeIsIn ? 1.0 : 0.0;  // For CR servos/motors
+                // Intake control - Hold buttons to run
+                // Left Bumper = intake in (forward power/position)
+                // Right Bumper = intake out (reverse power/position)
+                // Neither = stop (CRServo/Motor only, servos hold position)
+                if (gamepad2.left_bumper) {
+                    // Intake in - forward
+                    intake.targetPosition = intakeInPosition;
+                    intake.targetPower = 1.0;
+                } else if (gamepad2.right_bumper) {
+                    // Intake out - reverse
+                    intake.targetPosition = intakeOutPosition;
+                    intake.targetPower = -1.0;
+                } else {
+                    // Stop (only affects CRServo and Motor, servos ignore power)
+                    intake.targetPower = 0;
                 }
-                lastGamepad2LeftBumper = gamepad2.left_bumper;
 
                 intake.update(IntakeAttached);
             }
 
 
             // ========== SHOOTER CONTROL ==========
-            if (shooterAttached || shooterHingeAttached || magazineAttached) {
+            if (shooterAttached || shooterHingeAttached || magazineAttached || spindexerAttached || flipperAttached) {
 
                 // Shooter motor (Right Trigger) - only if shooter attached
                 if (shooterAttached) {
@@ -282,7 +323,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
                     }
                 }
 
-                // Toggle hinge (A button) - only if hinge attached
+                // Toggle hinge (Left Trigger) - only if hinge attached
                 if (shooterHingeAttached) {
                     if (gamepad2.left_trigger >= 0.2) {
                         // Set both - class will use the right one based on type
@@ -294,8 +335,39 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
                     }
                 }
 
+                // Flipper control (D-pad Up/Down) - only if flipper attached
+                // Flipper is a positional servo
+                if (flipperAttached) {
+                    if (gamepad2.dpad_up && shooter.getShooterAtTarget(300)) {
+                        // Set both - class will use the right one based on type
+                        shooter.flipperTargetPosition = flipperActivePosition;
+                        shooter.flipperTargetPower = flipperActivePower;
+                    } else if (gamepad2.dpad_down) {
+                        shooter.flipperTargetPosition = flipperIdlePosition;
+                        shooter.flipperTargetPower = 0;
+                    }
+                }
+
+                // Spindexer control (D-pad Left/Right) - only if spindexer attached
+                // Spindexer is a continuous rotation servo (left = negative power, right = positive power)
+                if (spindexerAttached) {
+                    if (gamepad2.dpad_right) {
+                        // Spin right - positive power
+                        shooter.spindexerTargetPosition = spindexerActivePosition;
+                        shooter.spindexerTargetPower = spindexerActivePower;
+                    } else if (gamepad2.dpad_left) {
+                        // Spin left - negative power
+                        shooter.spindexerTargetPosition = spindexerIdlePosition;
+                        shooter.spindexerTargetPower = -spindexerActivePower;
+                    } else {
+                        // No button pressed - stop
+                        shooter.spindexerTargetPosition = 0;
+                        shooter.spindexerTargetPower = 0;
+                    }
+                }
+
                 // Update shooter (pass individual enable flags)
-                shooter.update(shooterAttached, shooterHingeAttached, magazineAttached);
+                shooter.update(shooterAttached, shooterHingeAttached, magazineAttached, spindexerAttached, flipperAttached);
             }
 
 
