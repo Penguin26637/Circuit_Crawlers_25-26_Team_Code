@@ -32,7 +32,7 @@ public class OdometryClass {
 
     // Status - Public
     public boolean enabled = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
     /**
      * Constructor - just initializes hardware

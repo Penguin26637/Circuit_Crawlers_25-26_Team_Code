@@ -81,12 +81,9 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
     public static double flipperActivePower = 1.0;
 
 
-    // ========== CLASS INSTANCES ==========
-    private DriveControlClass drive;
     private IntakeClass intake;
     private ShooterClassMK3 shooter;
     private OdometryClass odometry;
-    private TelemetryClassMK3 telem;
 
     // ========== BUTTON DEBOUNCING ==========
     private boolean lastGamepad1A = false;
@@ -109,22 +106,11 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
 //        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
 
-        if (!intake1Type.equals("none") || !intake2Type.equals("none")){
-            IntakeAttached = true;}
-        else {IntakeAttached = false;}
-        if (!magazine1Type.equals("none") || !magazine2Type.equals("none") || !magazine3Type.equals("none") || !magazine4Type.equals("none")){
-            magazineAttached = true;
-        }
-        else {magazineAttached = false;}
-        if (!shooterHinge1Type.equals("none") || !shooterHinge2Type.equals("none")) {
-            shooterHingeAttached = true;}
-        else {shooterHingeAttached = false;}
-        if (!spindexerType.equals("none")) {
-            spindexerAttached = true;}
-        else {spindexerAttached = false;}
-        if (!flipperType.equals("none")) {
-            flipperAttached = true;}
-        else {flipperAttached = false;}
+        IntakeAttached = !intake1Type.equals("none") || !intake2Type.equals("none");
+        magazineAttached = !magazine1Type.equals("none") || !magazine2Type.equals("none") || !magazine3Type.equals("none") || !magazine4Type.equals("none");
+        shooterHingeAttached = !shooterHinge1Type.equals("none") || !shooterHinge2Type.equals("none");
+        spindexerAttached = !spindexerType.equals("none");
+        flipperAttached = !flipperType.equals("none");
 
         telemetry.addData("IntakeAttached", IntakeAttached);
         telemetry.addData("Mag attached", magazineAttached);
@@ -132,7 +118,8 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
         telemetry.addData("spindexer attached", spindexerAttached);
         telemetry.addData("flipper attached", flipperAttached);
         // ========== INITIALIZE CLASSES ==========
-        drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
+        // ========== CLASS INSTANCES ==========
+        DriveControlClass drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
 
         if (IntakeAttached) {
@@ -149,7 +136,7 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-        telem = new TelemetryClassMK3(telemetry, hardwareMap, shooter);
+        TelemetryClassMK3 telem = new TelemetryClassMK3(telemetry, hardwareMap, shooter);
 
         // Link classes to telemetry
         telem.drive = drive;
@@ -385,5 +372,37 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
 
             sleep(20);
         }
+    }
+
+    public boolean isLastGamepad2A() {
+        return lastGamepad2A;
+    }
+
+    public void setLastGamepad2A(boolean lastGamepad2A) {
+        this.lastGamepad2A = lastGamepad2A;
+    }
+
+    public boolean isIntakeIsIn() {
+        return intakeIsIn;
+    }
+
+    public void setIntakeIsIn(boolean intakeIsIn) {
+        this.intakeIsIn = intakeIsIn;
+    }
+
+    public boolean isHinge1IsUp() {
+        return hinge1IsUp;
+    }
+
+    public void setHinge1IsUp(boolean hinge1IsUp) {
+        this.hinge1IsUp = hinge1IsUp;
+    }
+
+    public boolean isHinge2IsUp() {
+        return hinge2IsUp;
+    }
+
+    public void setHinge2IsUp(boolean hinge2IsUp) {
+        this.hinge2IsUp = hinge2IsUp;
     }
 }

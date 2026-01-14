@@ -28,7 +28,7 @@ public class TelemetryClass {
     // Status - Public
     public boolean enabled = false;
     public boolean dashboardEnabled = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
     public TelemetryClass(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;

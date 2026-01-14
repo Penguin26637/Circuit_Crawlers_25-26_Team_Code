@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_N
  * Supports flexible magazine: up to 4, each can be Servo, CRServo, or DcMotor
  * Added spindexer and flipper servos
  * All variables are public and controlled from main teleop
- *
+
  * FIXED: Always calls loop() to keep RPM updated even when target is 0
  */
 public class ShooterClassMK3 {
@@ -66,8 +66,8 @@ public class ShooterClassMK3 {
     public boolean magazine4Initialized = false;
     public boolean spindexerInitialized = false;
     public boolean flipperInitialized = false;
-    public boolean magazineInitialized = false;
-    public boolean hingeInitialized = false;
+    public boolean magazineInitialized;
+    public boolean hingeInitialized;
 
     // Magazine type tracking - Public - Set from teleop constructor parameters
     public String magazine1Type;
@@ -114,21 +114,25 @@ public class ShooterClassMK3 {
         // Initialize hinge servo
         if (!initHinge1Type.equals("none")) {
             try {
-                if (initHinge1Type.equals("servo")) {
-                    hinge1Servo = hardwareMap.get(Servo.class, "hinge1");
-                    hinge1Servo.setPosition(0);
-                    hinge1Type = "servo";
-                    hinge1Initialized = true;
-                } else if (initHinge1Type.equals("crservo")) {
-                    hinge1CRservo = hardwareMap.get(CRServo.class, "hinge1");
-                    hinge1CRservo.setPower(0);
-                    hinge1Type = "crservo";
-                    hinge1Initialized = true;
-                } else if (initHinge1Type.equals("motor")) {
-                    hinge1Motor = hardwareMap.get(DcMotor.class, "hinge1");
-                    hinge1Motor.setPower(0);
-                    hinge1Type = "motor";
-                    hinge1Initialized = true;
+                switch (initHinge1Type) {
+                    case "servo" -> {
+                        hinge1Servo = hardwareMap.get(Servo.class, "hinge1");
+                        hinge1Servo.setPosition(0);
+                        hinge1Type = "servo";
+                        hinge1Initialized = true;
+                    }
+                    case "crservo" -> {
+                        hinge1CRservo = hardwareMap.get(CRServo.class, "hinge1");
+                        hinge1CRservo.setPower(0);
+                        hinge1Type = "crservo";
+                        hinge1Initialized = true;
+                    }
+                    case "motor" -> {
+                        hinge1Motor = hardwareMap.get(DcMotor.class, "hinge1");
+                        hinge1Motor.setPower(0);
+                        hinge1Type = "motor";
+                        hinge1Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 hinge1Initialized = false;
@@ -137,21 +141,25 @@ public class ShooterClassMK3 {
         }
         if (!initHinge2Type.equals("none")) {
             try {
-                if (initHinge2Type.equals("servo")) {
-                    hinge2Servo = hardwareMap.get(Servo.class, "hinge2");
-                    hinge2Servo.setPosition(0);
-                    hinge2Type = "servo";
-                    hinge2Initialized = true;
-                } else if (initHinge2Type.equals("crservo")) {
-                    hinge2CRservo = hardwareMap.get(CRServo.class, "hinge2");
-                    hinge2CRservo.setPower(0);
-                    hinge2Type = "crservo";
-                    hinge2Initialized = true;
-                } else if (initHinge2Type.equals("motor")) {
-                    hinge2Motor = hardwareMap.get(DcMotor.class, "hinge2");
-                    hinge2Motor.setPower(0);
-                    hinge2Type = "motor";
-                    hinge2Initialized = true;
+                switch (initHinge2Type) {
+                    case "servo" -> {
+                        hinge2Servo = hardwareMap.get(Servo.class, "hinge2");
+                        hinge2Servo.setPosition(0);
+                        hinge2Type = "servo";
+                        hinge2Initialized = true;
+                    }
+                    case "crservo" -> {
+                        hinge2CRservo = hardwareMap.get(CRServo.class, "hinge2");
+                        hinge2CRservo.setPower(0);
+                        hinge2Type = "crservo";
+                        hinge2Initialized = true;
+                    }
+                    case "motor" -> {
+                        hinge2Motor = hardwareMap.get(DcMotor.class, "hinge2");
+                        hinge2Motor.setPower(0);
+                        hinge2Type = "motor";
+                        hinge2Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 hinge2Initialized = false;
@@ -163,21 +171,25 @@ public class ShooterClassMK3 {
         // Initialize magazine 1
         if (!initMag1Type.equals("none")) {
             try {
-                if (initMag1Type.equals("servo")) {
-                    magazine1Servo = hardwareMap.get(Servo.class, "mag1");
-                    magazine1Servo.setPosition(0);
-                    magazine1Type = "servo";
-                    magazine1Initialized = true;
-                } else if (initMag1Type.equals("crservo")) {
-                    magazine1CRServo = hardwareMap.get(CRServo.class, "mag1");
-                    magazine1CRServo.setPower(0);
-                    magazine1Type = "crservo";
-                    magazine1Initialized = true;
-                } else if (initMag1Type.equals("motor")) {
-                    magazine1Motor = hardwareMap.get(DcMotor.class, "mag1");
-                    magazine1Motor.setPower(0);
-                    magazine1Type = "motor";
-                    magazine1Initialized = true;
+                switch (initMag1Type) {
+                    case "servo" -> {
+                        magazine1Servo = hardwareMap.get(Servo.class, "mag1");
+                        magazine1Servo.setPosition(0);
+                        magazine1Type = "servo";
+                        magazine1Initialized = true;
+                    }
+                    case "crservo" -> {
+                        magazine1CRServo = hardwareMap.get(CRServo.class, "mag1");
+                        magazine1CRServo.setPower(0);
+                        magazine1Type = "crservo";
+                        magazine1Initialized = true;
+                    }
+                    case "motor" -> {
+                        magazine1Motor = hardwareMap.get(DcMotor.class, "mag1");
+                        magazine1Motor.setPower(0);
+                        magazine1Type = "motor";
+                        magazine1Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 magazine1Initialized = false;
@@ -188,21 +200,25 @@ public class ShooterClassMK3 {
         // Initialize magazine 2
         if (!initMag2Type.equals("none")) {
             try {
-                if (initMag2Type.equals("servo")) {
-                    magazine2Servo = hardwareMap.get(Servo.class, "mag2");
-                    magazine2Servo.setPosition(0);
-                    magazine2Type = "servo";
-                    magazine2Initialized = true;
-                } else if (initMag2Type.equals("crservo")) {
-                    magazine2CRServo = hardwareMap.get(CRServo.class, "mag2");
-                    magazine2CRServo.setPower(0);
-                    magazine2Type = "crservo";
-                    magazine2Initialized = true;
-                } else if (initMag2Type.equals("motor")) {
-                    magazine2Motor = hardwareMap.get(DcMotor.class, "mag2");
-                    magazine2Motor.setPower(0);
-                    magazine2Type = "motor";
-                    magazine2Initialized = true;
+                switch (initMag2Type) {
+                    case "servo" -> {
+                        magazine2Servo = hardwareMap.get(Servo.class, "mag2");
+                        magazine2Servo.setPosition(0);
+                        magazine2Type = "servo";
+                        magazine2Initialized = true;
+                    }
+                    case "crservo" -> {
+                        magazine2CRServo = hardwareMap.get(CRServo.class, "mag2");
+                        magazine2CRServo.setPower(0);
+                        magazine2Type = "crservo";
+                        magazine2Initialized = true;
+                    }
+                    case "motor" -> {
+                        magazine2Motor = hardwareMap.get(DcMotor.class, "mag2");
+                        magazine2Motor.setPower(0);
+                        magazine2Type = "motor";
+                        magazine2Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 magazine2Initialized = false;
@@ -211,21 +227,25 @@ public class ShooterClassMK3 {
         }
         if (!initMag3Type.equals("none")) {
             try {
-                if (initMag3Type.equals("servo")) {
-                    magazine3Servo = hardwareMap.get(Servo.class, "mag3");
-                    magazine3Servo.setPosition(0);
-                    magazine3Type = "servo";
-                    magazine3Initialized = true;
-                } else if (initMag3Type.equals("crservo")) {
-                    magazine3CRServo = hardwareMap.get(CRServo.class, "mag3");
-                    magazine3CRServo.setPower(0);
-                    magazine3Type = "crservo";
-                    magazine3Initialized = true;
-                } else if (initMag3Type.equals("motor")) {
-                    magazine3Motor = hardwareMap.get(DcMotor.class, "mag3");
-                    magazine3Motor.setPower(0);
-                    magazine3Type = "motor";
-                    magazine3Initialized = true;
+                switch (initMag3Type) {
+                    case "servo" -> {
+                        magazine3Servo = hardwareMap.get(Servo.class, "mag3");
+                        magazine3Servo.setPosition(0);
+                        magazine3Type = "servo";
+                        magazine3Initialized = true;
+                    }
+                    case "crservo" -> {
+                        magazine3CRServo = hardwareMap.get(CRServo.class, "mag3");
+                        magazine3CRServo.setPower(0);
+                        magazine3Type = "crservo";
+                        magazine3Initialized = true;
+                    }
+                    case "motor" -> {
+                        magazine3Motor = hardwareMap.get(DcMotor.class, "mag3");
+                        magazine3Motor.setPower(0);
+                        magazine3Type = "motor";
+                        magazine3Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 magazine3Initialized = false;
@@ -234,21 +254,25 @@ public class ShooterClassMK3 {
         }
         if (!initMag4Type.equals("none")) {
             try {
-                if (initMag4Type.equals("servo")) {
-                    magazine4Servo = hardwareMap.get(Servo.class, "mag4");
-                    magazine4Servo.setPosition(0);
-                    magazine4Type = "servo";
-                    magazine4Initialized = true;
-                } else if (initMag4Type.equals("crservo")) {
-                    magazine4CRServo = hardwareMap.get(CRServo.class, "mag4");
-                    magazine4CRServo.setPower(0);
-                    magazine4Type = "crservo";
-                    magazine4Initialized = true;
-                } else if (initMag4Type.equals("motor")) {
-                    magazine4Motor = hardwareMap.get(DcMotor.class, "mag4");
-                    magazine4Motor.setPower(0);
-                    magazine4Type = "motor";
-                    magazine4Initialized = true;
+                switch (initMag4Type) {
+                    case "servo" -> {
+                        magazine4Servo = hardwareMap.get(Servo.class, "mag4");
+                        magazine4Servo.setPosition(0);
+                        magazine4Type = "servo";
+                        magazine4Initialized = true;
+                    }
+                    case "crservo" -> {
+                        magazine4CRServo = hardwareMap.get(CRServo.class, "mag4");
+                        magazine4CRServo.setPower(0);
+                        magazine4Type = "crservo";
+                        magazine4Initialized = true;
+                    }
+                    case "motor" -> {
+                        magazine4Motor = hardwareMap.get(DcMotor.class, "mag4");
+                        magazine4Motor.setPower(0);
+                        magazine4Type = "motor";
+                        magazine4Initialized = true;
+                    }
                 }
             } catch (Exception e) {
                 magazine4Initialized = false;
@@ -259,21 +283,25 @@ public class ShooterClassMK3 {
         // Initialize spindexer (hardware name: "spin")
         if (!initSpindexerType.equals("none")) {
             try {
-                if (initSpindexerType.equals("servo")) {
-                    spindexerServo = hardwareMap.get(Servo.class, "spin");
-                    spindexerServo.setPosition(0);
-                    spindexerType = "servo";
-                    spindexerInitialized = true;
-                } else if (initSpindexerType.equals("crservo")) {
-                    spindexerCRServo = hardwareMap.get(CRServo.class, "spin");
-                    spindexerCRServo.setPower(0);
-                    spindexerType = "crservo";
-                    spindexerInitialized = true;
-                } else if (initSpindexerType.equals("motor")) {
-                    spindexerMotor = hardwareMap.get(DcMotor.class, "spin");
-                    spindexerMotor.setPower(0);
-                    spindexerType = "motor";
-                    spindexerInitialized = true;
+                switch (initSpindexerType) {
+                    case "servo" -> {
+                        spindexerServo = hardwareMap.get(Servo.class, "spin");
+                        spindexerServo.setPosition(0);
+                        spindexerType = "servo";
+                        spindexerInitialized = true;
+                    }
+                    case "crservo" -> {
+                        spindexerCRServo = hardwareMap.get(CRServo.class, "spin");
+                        spindexerCRServo.setPower(0);
+                        spindexerType = "crservo";
+                        spindexerInitialized = true;
+                    }
+                    case "motor" -> {
+                        spindexerMotor = hardwareMap.get(DcMotor.class, "spin");
+                        spindexerMotor.setPower(0);
+                        spindexerType = "motor";
+                        spindexerInitialized = true;
+                    }
                 }
             } catch (Exception e) {
                 spindexerInitialized = false;
@@ -284,21 +312,25 @@ public class ShooterClassMK3 {
         // Initialize flipper (hardware name: "flipper")
         if (!initFlipperType.equals("none")) {
             try {
-                if (initFlipperType.equals("servo")) {
-                    flipperServo = hardwareMap.get(Servo.class, "flipper");
-                    flipperServo.setPosition(0);
-                    flipperType = "servo";
-                    flipperInitialized = true;
-                } else if (initFlipperType.equals("crservo")) {
-                    flipperCRServo = hardwareMap.get(CRServo.class, "flipper");
-                    flipperCRServo.setPower(0);
-                    flipperType = "crservo";
-                    flipperInitialized = true;
-                } else if (initFlipperType.equals("motor")) {
-                    flipperMotor = hardwareMap.get(DcMotor.class, "flipper");
-                    flipperMotor.setPower(0);
-                    flipperType = "motor";
-                    flipperInitialized = true;
+                switch (initFlipperType) {
+                    case "servo" -> {
+                        flipperServo = hardwareMap.get(Servo.class, "flipper");
+                        flipperServo.setPosition(0);
+                        flipperType = "servo";
+                        flipperInitialized = true;
+                    }
+                    case "crservo" -> {
+                        flipperCRServo = hardwareMap.get(CRServo.class, "flipper");
+                        flipperCRServo.setPower(0);
+                        flipperType = "crservo";
+                        flipperInitialized = true;
+                    }
+                    case "motor" -> {
+                        flipperMotor = hardwareMap.get(DcMotor.class, "flipper");
+                        flipperMotor.setPower(0);
+                        flipperType = "motor";
+                        flipperInitialized = true;
+                    }
                 }
             } catch (Exception e) {
                 flipperInitialized = false;
@@ -339,23 +371,19 @@ public class ShooterClassMK3 {
 
         // Update hinge
         if (hingeEnabled && hinge1Initialized) {
-            if (hinge1Type.equals("servo")) {
-                hinge1Servo.setPosition(hingeTargetPosition);
-            } else if (hinge1Type.equals("crservo")) {
-                hinge1CRservo.setPower(hingeTargetPower);
-            } else if (hinge1Type.equals("motor")) {
-                hinge1Motor.setPower(hingeTargetPower);
+            switch (hinge1Type) {
+                case "servo" -> hinge1Servo.setPosition(hingeTargetPosition);
+                case "crservo" -> hinge1CRservo.setPower(hingeTargetPower);
+                case "motor" -> hinge1Motor.setPower(hingeTargetPower);
             }
         } else if (hinge1Initialized) {
             stophinge1();
         }
         if (hingeEnabled && hinge2Initialized) {
-            if (hinge2Type.equals("servo")) {
-                hinge2Servo.setPosition(hingeTargetPosition);
-            } else if (hinge2Type.equals("crservo")) {
-                hinge2CRservo.setPower(hingeTargetPower);
-            } else if (hinge2Type.equals("motor")) {
-                hinge2Motor.setPower(hingeTargetPower);
+            switch (hinge2Type) {
+                case "servo" -> hinge2Servo.setPosition(hingeTargetPosition);
+                case "crservo" -> hinge2CRservo.setPower(hingeTargetPower);
+                case "motor" -> hinge2Motor.setPower(hingeTargetPower);
             }
         } else if (hinge2Initialized) {
             stophinge2();
@@ -363,12 +391,10 @@ public class ShooterClassMK3 {
 
         // Update magazine 1
         if (magazineEnabled && magazine1Initialized) {
-            if (magazine1Type.equals("servo")) {
-                magazine1Servo.setPosition(magazineTargetPosition);
-            } else if (magazine1Type.equals("crservo")) {
-                magazine1CRServo.setPower(magazineTargetPower);
-            } else if (magazine1Type.equals("motor")) {
-                magazine1Motor.setPower(magazineTargetPower);
+            switch (magazine1Type) {
+                case "servo" -> magazine1Servo.setPosition(magazineTargetPosition);
+                case "crservo" -> magazine1CRServo.setPower(magazineTargetPower);
+                case "motor" -> magazine1Motor.setPower(magazineTargetPower);
             }
         } else if (magazine1Initialized) {
             stopMagazine1();
@@ -376,34 +402,28 @@ public class ShooterClassMK3 {
 
         // Update magazine 2
         if (magazineEnabled && magazine2Initialized) {
-            if (magazine2Type.equals("servo")) {
-                magazine2Servo.setPosition(magazineTargetPosition);
-            } else if (magazine2Type.equals("crservo")) {
-                magazine2CRServo.setPower(magazineTargetPower);
-            } else if (magazine2Type.equals("motor")) {
-                magazine2Motor.setPower(magazineTargetPower);
+            switch (magazine2Type) {
+                case "servo" -> magazine2Servo.setPosition(magazineTargetPosition);
+                case "crservo" -> magazine2CRServo.setPower(magazineTargetPower);
+                case "motor" -> magazine2Motor.setPower(magazineTargetPower);
             }
         } else if (magazine2Initialized) {
             stopMagazine2();
         }
         if (magazineEnabled && magazine3Initialized) {
-            if (magazine3Type.equals("servo")) {
-                magazine3Servo.setPosition(magazineTargetPosition);
-            } else if (magazine3Type.equals("crservo")) {
-                magazine3CRServo.setPower(magazineTargetPower);
-            } else if (magazine3Type.equals("motor")) {
-                magazine3Motor.setPower(magazineTargetPower);
+            switch (magazine3Type) {
+                case "servo" -> magazine3Servo.setPosition(magazineTargetPosition);
+                case "crservo" -> magazine3CRServo.setPower(magazineTargetPower);
+                case "motor" -> magazine3Motor.setPower(magazineTargetPower);
             }
         } else if (magazine3Initialized) {
             stopMagazine3();
         }
         if (magazineEnabled && magazine4Initialized) {
-            if (magazine4Type.equals("servo")) {
-                magazine4Servo.setPosition(magazineTargetPosition);
-            } else if (magazine4Type.equals("crservo")) {
-                magazine4CRServo.setPower(magazineTargetPower);
-            } else if (magazine4Type.equals("motor")) {
-                magazine4Motor.setPower(magazineTargetPower);
+            switch (magazine4Type) {
+                case "servo" -> magazine4Servo.setPosition(magazineTargetPosition);
+                case "crservo" -> magazine4CRServo.setPower(magazineTargetPower);
+                case "motor" -> magazine4Motor.setPower(magazineTargetPower);
             }
         } else if (magazine4Initialized) {
             stopMagazine4();
@@ -411,12 +431,10 @@ public class ShooterClassMK3 {
 
         // Update spindexer
         if (spindexerEnabled && spindexerInitialized) {
-            if (spindexerType.equals("servo")) {
-                spindexerServo.setPosition(spindexerTargetPosition);
-            } else if (spindexerType.equals("crservo")) {
-                spindexerCRServo.setPower(spindexerTargetPower);
-            } else if (spindexerType.equals("motor")) {
-                spindexerMotor.setPower(spindexerTargetPower);
+            switch (spindexerType) {
+                case "servo" -> spindexerServo.setPosition(spindexerTargetPosition);
+                case "crservo" -> spindexerCRServo.setPower(spindexerTargetPower);
+                case "motor" -> spindexerMotor.setPower(spindexerTargetPower);
             }
         } else if (spindexerInitialized) {
             stopSpindexer();
@@ -424,12 +442,10 @@ public class ShooterClassMK3 {
 
         // Update flipper
         if (flipperEnabled && flipperInitialized) {
-            if (flipperType.equals("servo")) {
-                flipperServo.setPosition(flipperTargetPosition);
-            } else if (flipperType.equals("crservo")) {
-                flipperCRServo.setPower(flipperTargetPower);
-            } else if (flipperType.equals("motor")) {
-                flipperMotor.setPower(flipperTargetPower);
+            switch (flipperType) {
+                case "servo" -> flipperServo.setPosition(flipperTargetPosition);
+                case "crservo" -> flipperCRServo.setPower(flipperTargetPower);
+                case "motor" -> flipperMotor.setPower(flipperTargetPower);
             }
         } else if (flipperInitialized) {
             stopFlipper();
@@ -440,12 +456,10 @@ public class ShooterClassMK3 {
      * Stop magazine 1
      */
     public void stopMagazine1() {
-        if (magazine1Type.equals("servo")) {
-            magazine1Servo.setPosition(0);
-        } else if (magazine1Type.equals("crservo")) {
-            magazine1CRServo.setPower(0);
-        } else if (magazine1Type.equals("motor")) {
-            magazine1Motor.setPower(0);
+        switch (magazine1Type) {
+            case "servo" -> magazine1Servo.setPosition(0);
+            case "crservo" -> magazine1CRServo.setPower(0);
+            case "motor" -> magazine1Motor.setPower(0);
         }
     }
 
@@ -453,48 +467,38 @@ public class ShooterClassMK3 {
      * Stop magazine 2
      */
     public void stopMagazine2() {
-        if (magazine2Type.equals("servo")) {
-            magazine2Servo.setPosition(0);
-        } else if (magazine2Type.equals("crservo")) {
-            magazine2CRServo.setPower(0);
-        } else if (magazine2Type.equals("motor")) {
-            magazine2Motor.setPower(0);
+        switch (magazine2Type) {
+            case "servo" -> magazine2Servo.setPosition(0);
+            case "crservo" -> magazine2CRServo.setPower(0);
+            case "motor" -> magazine2Motor.setPower(0);
         }
     }
     public void stopMagazine3() {
-        if (magazine3Type.equals("servo")) {
-            magazine3Servo.setPosition(0);
-        } else if (magazine3Type.equals("crservo")) {
-            magazine3CRServo.setPower(0);
-        } else if (magazine3Type.equals("motor")) {
-            magazine3Motor.setPower(0);
+        switch (magazine3Type) {
+            case "servo" -> magazine3Servo.setPosition(0);
+            case "crservo" -> magazine3CRServo.setPower(0);
+            case "motor" -> magazine3Motor.setPower(0);
         }
     }
     public void stopMagazine4() {
-        if (magazine4Type.equals("servo")) {
-            magazine4Servo.setPosition(0);
-        } else if (magazine4Type.equals("crservo")) {
-            magazine4CRServo.setPower(0);
-        } else if (magazine4Type.equals("motor")) {
-            magazine4Motor.setPower(0);
+        switch (magazine4Type) {
+            case "servo" -> magazine4Servo.setPosition(0);
+            case "crservo" -> magazine4CRServo.setPower(0);
+            case "motor" -> magazine4Motor.setPower(0);
         }
     }
     public void stophinge1() {
-        if (hinge1Type.equals("servo")) {
-            hinge1Servo.setPosition(0);
-        } else if (hinge1Type.equals("crservo")) {
-            hinge1CRservo.setPower(0);
-        } else if (hinge1Type.equals("motor")) {
-            hinge1Motor.setPower(0);
+        switch (hinge1Type) {
+            case "servo" -> hinge1Servo.setPosition(0);
+            case "crservo" -> hinge1CRservo.setPower(0);
+            case "motor" -> hinge1Motor.setPower(0);
         }
     }
     public void stophinge2() {
-        if (hinge2Type.equals("servo")) {
-            hinge2Servo.setPosition(0);
-        } else if (hinge2Type.equals("crservo")) {
-            hinge2CRservo.setPower(0);
-        } else if (hinge2Type.equals("motor")) {
-            hinge2Motor.setPower(0);
+        switch (hinge2Type) {
+            case "servo" -> hinge2Servo.setPosition(0);
+            case "crservo" -> hinge2CRservo.setPower(0);
+            case "motor" -> hinge2Motor.setPower(0);
         }
     }
 
@@ -502,12 +506,10 @@ public class ShooterClassMK3 {
      * Stop spindexer
      */
     public void stopSpindexer() {
-        if (spindexerType.equals("servo")) {
-            spindexerServo.setPosition(0);
-        } else if (spindexerType.equals("crservo")) {
-            spindexerCRServo.setPower(0);
-        } else if (spindexerType.equals("motor")) {
-            spindexerMotor.setPower(0);
+        switch (spindexerType) {
+            case "servo" -> spindexerServo.setPosition(0);
+            case "crservo" -> spindexerCRServo.setPower(0);
+            case "motor" -> spindexerMotor.setPower(0);
         }
     }
 
@@ -515,12 +517,10 @@ public class ShooterClassMK3 {
      * Stop flipper
      */
     public void stopFlipper() {
-        if (flipperType.equals("servo")) {
-            flipperServo.setPosition(0);
-        } else if (flipperType.equals("crservo")) {
-            flipperCRServo.setPower(0);
-        } else if (flipperType.equals("motor")) {
-            flipperMotor.setPower(0);
+        switch (flipperType) {
+            case "servo" -> flipperServo.setPosition(0);
+            case "crservo" -> flipperCRServo.setPower(0);
+            case "motor" -> flipperMotor.setPower(0);
         }
     }
 

@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.util.Objects;
+
 
 /**
  * CombinedClassTeleopTest - Main control hub
@@ -63,12 +65,9 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
     public static double magazineActivePower = 0.5;
 
 
-    // ========== CLASS INSTANCES ==========
-    private DriveControlClass drive;
     private IntakeClass intake;
     private ShooterClassMK2 shooter;
     private OdometryClass odometry;
-    private TelemetryClassMK2 telem;
 
     // ========== BUTTON DEBOUNCING ==========
     private boolean lastGamepad1A = false;
@@ -92,14 +91,14 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 //        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
 
-        if (intake1Type != "none" || intake2Type != "none"){
+        if (!Objects.equals(intake1Type, "none") || !Objects.equals(intake2Type, "none")){
             IntakeAttached = true;}
         else {IntakeAttached = false;}
-        if (magazine1Type != "none" || magazine2Type != "none" || magazine3Type != "none" || magazine4Type != "none"){
+        if (!Objects.equals(magazine1Type, "none") || !Objects.equals(magazine2Type, "none") || !Objects.equals(magazine3Type, "none") || !Objects.equals(magazine4Type, "none")){
             magazineAttached = true;
         }
         else {magazineAttached = false;}
-        if (shooterHinge1Type != "none" || shooterHinge2Type != "none") {
+        if (!Objects.equals(shooterHinge1Type, "none") || !Objects.equals(shooterHinge2Type, "none")) {
             shooterHingeAttached = true;}
         else {shooterHingeAttached = false;}
 
@@ -107,7 +106,8 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
         telemetry.addData("Mag attached", magazineAttached);
         telemetry.addData("shooter hinge attached", shooterHingeAttached);
         // ========== INITIALIZE CLASSES ==========
-        drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
+        // ========== CLASS INSTANCES ==========
+        DriveControlClass drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
 
         if (IntakeAttached) {
@@ -122,7 +122,7 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-        telem = new TelemetryClassMK2(telemetry, hardwareMap, shooter);
+        TelemetryClassMK2 telem = new TelemetryClassMK2(telemetry, hardwareMap, shooter);
 
         // Link classes to telemetry
         telem.drive = drive;
@@ -311,5 +311,29 @@ public class CombinedClassTeleopTestMK2 extends LinearOpMode {
 
             sleep(20);
         }
+    }
+
+    public boolean isLastGamepad2A() {
+        return lastGamepad2A;
+    }
+
+    public void setLastGamepad2A(boolean lastGamepad2A) {
+        this.lastGamepad2A = lastGamepad2A;
+    }
+
+    public boolean isHinge1IsUp() {
+        return hinge1IsUp;
+    }
+
+    public void setHinge1IsUp(boolean hinge1IsUp) {
+        this.hinge1IsUp = hinge1IsUp;
+    }
+
+    public boolean isHinge2IsUp() {
+        return hinge2IsUp;
+    }
+
+    public void setHinge2IsUp(boolean hinge2IsUp) {
+        this.hinge2IsUp = hinge2IsUp;
     }
 }

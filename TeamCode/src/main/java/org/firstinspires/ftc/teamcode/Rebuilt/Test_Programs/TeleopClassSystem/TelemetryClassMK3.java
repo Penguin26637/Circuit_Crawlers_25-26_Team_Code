@@ -29,7 +29,7 @@ public class TelemetryClassMK3 {
     // Status - Public
     public boolean enabled = false;
     public boolean dashboardEnabled = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
     public TelemetryClassMK3(Telemetry telemetry, HardwareMap hardwareMap, ShooterClassMK3 shooter) {
         this.telemetry = telemetry;

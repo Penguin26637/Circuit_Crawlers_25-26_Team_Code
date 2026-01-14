@@ -30,7 +30,7 @@ public class IntakeClass {
     // Component status
     public boolean intake1Initialized = false;
     public boolean intake2Initialized = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
     // Type tracking
     public String intake1Type = "none";  // "servo", "crservo", "motor", or "none"

@@ -67,13 +67,9 @@ public class CombinedClassTeleopTest extends LinearOpMode {
     public static double hinge2DownPosition = 0.0;
 
 
-
-    // ========== CLASS INSTANCES ==========
-    private DriveControlClass drive;
     private IntakeClass intake;
     private ShooterClass shooter;
     private OdometryClass odometry;
-    private TelemetryClass telem;
 
     // ========== BUTTON DEBOUNCING ==========
     private boolean lastGamepad1A = false;
@@ -97,7 +93,8 @@ public class CombinedClassTeleopTest extends LinearOpMode {
         telemetry.update();
 
         // ========== INITIALIZE CLASSES ==========
-        drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
+        // ========== CLASS INSTANCES ==========
+        DriveControlClass drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
         if (IntakeAttached) {
             intake = new IntakeClass(hardwareMap, telemetry, intake1Type, intake2Type);
@@ -112,7 +109,7 @@ public class CombinedClassTeleopTest extends LinearOpMode {
             odometry = new OdometryClass(hardwareMap, telemetry);
         }
 
-        telem = new TelemetryClass(telemetry, hardwareMap);
+        TelemetryClass telem = new TelemetryClass(telemetry, hardwareMap);
 
         // Link classes to telemetry
         telem.drive = drive;

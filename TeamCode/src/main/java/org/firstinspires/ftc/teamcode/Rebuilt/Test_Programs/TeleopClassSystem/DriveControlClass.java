@@ -41,7 +41,7 @@ public class DriveControlClass {
     public double DRIVE_TICKS_PER_REV = 537.7;
 
     // Component initialization status - Public
-    public boolean initialized = false;
+    public boolean initialized;
     public boolean driveMotorsInitialized = false;
     public boolean imuInitialized = false;
     public boolean backPidInitialized = false;
@@ -141,7 +141,7 @@ public class DriveControlClass {
             applyWheelBrake();
         } else if (useFieldCentric) {
             // Get heading from IMU or odometry based on flag
-            double heading = 0;
+            double heading;
             if (useImuForFieldCentric && imuInitialized) {
                 heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             } else {
