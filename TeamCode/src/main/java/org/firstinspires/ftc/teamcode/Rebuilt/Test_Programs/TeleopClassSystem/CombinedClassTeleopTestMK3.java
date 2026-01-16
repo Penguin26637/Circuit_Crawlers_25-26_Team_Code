@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.TeleopClassSystem;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 /**
@@ -67,7 +68,7 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
 
     // ========== SHOOTER CONFIGURATION ==========
     public static double shooterActiveRPM = 1400;  // ✓ FIXED: Changed from 600 to 1400
-    public static double shooterIdleRPM = 0;
+    public static double shooterIdleRPM = 700;
     public static double magazineActivePower = 0.5;
 
     // ========== SPINDEXER CONFIGURATION ==========
@@ -105,6 +106,10 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
 //        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
+
+
+
+
 
         IntakeAttached = !intake1Type.equals("none") || !intake2Type.equals("none");
         magazineAttached = !magazine1Type.equals("none") || !magazine2Type.equals("none") || !magazine3Type.equals("none") || !magazine4Type.equals("none");
@@ -186,6 +191,8 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
                 telemetry.addData("Flipper", shooter.getFlipperInitialized() ? "✓" : "✗");
         }
         if (OdometryAttached) telemetry.addData("Odometry", odometry.getInitialized() ? "✓" : "✗");
+        telemetry.addData("Troubleshooting: ", hardwareMap.tryGet(DcMotor.class, "frontl"));
+
         telemetry.update();
 
         waitForStart();
