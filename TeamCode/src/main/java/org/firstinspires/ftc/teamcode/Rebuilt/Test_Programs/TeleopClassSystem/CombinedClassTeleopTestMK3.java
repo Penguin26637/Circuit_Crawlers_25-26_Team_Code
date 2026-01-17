@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
+
+// TODO: There will be some refactoring required when you make changes
+//       to the other classes, but nothing structurally wrong here.
+
 /**
  * CombinedClassTeleopTest MK3 - Main control hub
  * ALL variables are controlled from here
@@ -380,6 +384,9 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
             sleep(20);
         }
     }
+
+    //TODO: accessing fields without a getter/setter is fine when it is from this class,
+    //      so these can be removed.
 
     public boolean isLastGamepad2A() {
         return lastGamepad2A;

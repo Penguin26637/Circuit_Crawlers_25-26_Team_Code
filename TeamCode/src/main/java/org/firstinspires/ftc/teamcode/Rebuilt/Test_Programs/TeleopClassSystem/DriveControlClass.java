@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_New;
 
+//TODO: This works so I would just leave it for now. We can make changes later.
+
 /**
  * DriveControlClass - Handles drive motor logic
  * All variables are public and controlled from main teleop

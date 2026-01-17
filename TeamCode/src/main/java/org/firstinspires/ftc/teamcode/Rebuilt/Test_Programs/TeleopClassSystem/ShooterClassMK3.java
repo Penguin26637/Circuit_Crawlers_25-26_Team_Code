@@ -8,6 +8,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_New;
 
+//TODO: This class should be refactored so that it takes on more responsibility.
+//      What Erik and I were thinking is it keeps track of all internal details of the
+//      shooter (like motor positions, speeds, etc.) and exposes methods like:
+//      .setShootingMode()    close, far, etc.
+//      .shoot()              set internal state to shoot when ready
+//      .update()             basically the same as is, updates everything behind the scenes
+
 /**
  * ShooterClassMK3 - Handles shooter logic
  * Supports flexible magazine: up to 4, each can be Servo, CRServo, or DcMotor
@@ -21,6 +28,8 @@ public class ShooterClassMK3 {
     // Hardware - Public - Only initialized ones will be non-null
     public MotorPowerRegulator_New shooterMotor;
 
+    //TODO: Now we know explicitly what types of motors/servos to expect, so
+    //      these conditional fields aren't really necessary.
     public Servo hinge1Servo, hinge2Servo;
     public CRServo hinge1CRservo, hinge2CRservo;
     public DcMotor hinge1Motor, hinge2Motor;
@@ -50,6 +59,10 @@ public class ShooterClassMK3 {
     public double spindexerTargetPosition = 0;   // For regular servos (0-1)
     public double flipperTargetPower = 0;        // For CR servos and motors (-1 to 1)
     public double flipperTargetPosition = 0;     // For regular servos (0-1)
+
+    // TODO: Combine these booleans with the 'attached' booleans outside.
+    //       Erik thinks the combined booleans should all be in main (only
+    //       call update if it's attached). I agree, it will make this class simpler.
 
     // Component status - Public
     public boolean shooterEnabled = true;
@@ -342,6 +355,9 @@ public class ShooterClassMK3 {
         hingeInitialized = hinge1Initialized || hinge2Initialized;
     }
 
+    //TODO: Add methods to modify the shooting mode and to set the current goal to shoot
+    //      (or whatever you decide to do here.)
+
     /**
      * Main update - reads public variables and applies them
      * FIXED: Always calls loop() to keep RPM updated, even when target is 0
@@ -525,6 +541,10 @@ public class ShooterClassMK3 {
     }
 
     // ==================== GETTERS ====================
+
+    //TODO: After refactor, these will probably be unnecessary. Remove them if
+    //      they are. Generally, you only need getters/setters if it is necessary
+    //      to expose something internal.
 
     public boolean getShooterInitialized() { return shooterInitialized; }
     public boolean getMagazineInitialized() { return magazineInitialized; }
