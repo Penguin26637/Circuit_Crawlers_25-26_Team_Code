@@ -59,6 +59,9 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
 
 
 
+
+
+
     // ========== DRIVE CONFIGURATION ==========
     public static double normalSpeed = 0.75;
     public static double slowSpeed = 0.1;
@@ -105,15 +108,13 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
     private boolean hinge1IsUp = false;
     private boolean hinge2IsUp = false;
 
+    private CRServo spindexerCRServo;
+    private Servo flipperServo;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initializing...");
-//        telemetry.addData("StatusofMotor: ", hardwareMap.get(""));
         telemetry.update();
-
-
-
-
 
         IntakeAttached = !intake1Type.equals("none") || !intake2Type.equals("none");
         magazineAttached = !magazine1Type.equals("none") || !magazine2Type.equals("none") || !magazine3Type.equals("none") || !magazine4Type.equals("none");
@@ -130,15 +131,15 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
         // ========== CLASS INSTANCES ==========
         DriveControlClass drive = new DriveControlClass(hardwareMap, telemetry, driveMotorsAttached, imuAttached, backMotorPidAttached);
 
-
         if (IntakeAttached) {
             intake = new IntakeClass(hardwareMap, telemetry, intake1Type, intake2Type);
         }
 
-        if (shooterAttached || shooterHingeAttached || magazineAttached || spindexerAttached || flipperAttached) {
-            shooter = new ShooterClassMK3(hardwareMap, telemetry, shooterAttached, shooterHinge1Type, shooterHinge2Type,
-                    magazine1Type, magazine2Type, magazine3Type, magazine4Type,
-                    spindexerType, flipperType);
+        spindexerCRServo = hardwareMap.get(CRServo.class, 'spin')
+        flipperServo = hardwareMap.get(Servo.class, 'flip')
+
+        if (shooterAttached) {
+            shooter = new ShooterClassMK3(spindexerCRServo, flipperServo, telemetry, hardwareMap, telemetry);
         }
 
         if (OdometryAttached) {
