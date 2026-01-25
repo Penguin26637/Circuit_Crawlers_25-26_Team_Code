@@ -1,73 +1,76 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 /**
- * Represents an FTC servo or continuous rotation (CR) servo with two preset states.
+ * Represents an FTC servo that can be positioned at any value.
+ * Supports both standard Servo and CRServo types.
  */
 class ServoClass {
-    public enum ServoType { STANDARD, CONTINUOUS_ROTATION }
-
-    private ServoType type;
-    private String hardwareMapName;
-    private double pos1;
-    private double pos2;
-
-    // HardwareDevice is the common interface for ALL hardware
-    private HardwareDevice device;
-    private Servo standardServo;
-    private CRServo crServo;
-
-    public ServoClass(ServoType type, String name, double pos1, double pos2) {
-        this.type = type;
-        this.hardwareMapName = name;
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+    public enum ServoType {
+        STANDARD_SERVO,
+        CONTINUOUS_SERVO
     }
 
+    private String hardwareMapName;
+    private ServoType type;
+    private Servo servo;           // For standard servos
+    private CRServo crServo;       // For continuous rotation servos
+
+    public ServoClass(String name, ServoType type) {
+        this.hardwareMapName = name;
+        this.type = type;
+    }
+
+    /**
+     * Initializes the servo hardware from the hardwareMap.
+     */
     public void init(HardwareMap hwMap) {
-        if (type == ServoType.STANDARD) {
-            standardServo = hwMap.get(Servo.class, hardwareMapName);
-            device = standardServo;
-        } else if (type == ServoType.CONTINUOUS_ROTATION) {
+        if (type == ServoType.STANDARD_SERVO) {
+            servo = hwMap.get(Servo.class, hardwareMapName);
+        } else {
             crServo = hwMap.get(CRServo.class, hardwareMapName);
-            device = crServo;
         }
     }
 
     /**
-     * Sets the position for a standard servo or the power for a CR servo.
-     *
-     * @param position The target position (for standard) or power (for CR).
+     * Sets the servo to a specific position (0.0 to 1.0) or power (-1.0 to 1.0 for CRServo).
+     * @param position The position/power to set
      */
     public void goToPosition(double position) {
-        if (device == null) return;
-
-        if (type == ServoType.STANDARD) {
-            standardServo.setPosition(position);
-        } else {
-            // For a CR servo, the "position" parameter is treated as power.
+        if (type == ServoType.STANDARD_SERVO && servo != null) {
+            servo.setPosition(position);
+        } else if (type == ServoType.CONTINUOUS_SERVO && crServo != null) {
             crServo.setPower(position);
         }
     }
 
-    public void goToPosition1() {
-        goToPosition(pos1);
+    /**
+     * Stops a continuous rotation servo (sets power to 0).
+     * Has no effect on standard servos.
+     */
+    public void stop() {
+        if (type == ServoType.CONTINUOUS_SERVO && crServo != null) {
+            crServo.setPower(0.0);
+        }
     }
 
-    public void goToPosition2() {
-        goToPosition(pos2);
+    /**
+     * Gets the current position (standard servo only).
+     * @return Current position, or -1 if not a standard servo
+     */
+    public double getCurrentPosition() {
+        if (type == ServoType.STANDARD_SERVO && servo != null) {
+            return servo.getPosition();
+        }
+        return -1;
     }
 
-    public double getPos1() { return pos1; }
-    public void setPos1(double pos1) { this.pos1 = pos1; }
-    public double getPos2() { return pos2; }
-    public void setPos2(double pos2) { this.pos2 = pos2; }
+    // Getters
     public String getName() { return hardwareMapName; }
-
-    // Returns the base HardwareDevice
-    public HardwareDevice getHardwareDevice() { return device; }
+    public ServoType getType() { return type; }
+    public Servo getServo() { return servo; }
+    public CRServo getCRServo() { return crServo; }
 }
