@@ -3,8 +3,9 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.TeleopClassSystem;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 // TODO: There will be some refactoring required when you make changes
@@ -135,8 +136,8 @@ public class CombinedClassTeleopTestMK3 extends LinearOpMode {
             intake = new IntakeClass(hardwareMap, telemetry, intake1Type, intake2Type);
         }
 
-        spindexerCRServo = hardwareMap.get(CRServo.class, 'spin')
-        flipperServo = hardwareMap.get(Servo.class, 'flip')
+        spindexerCRServo = hardwareMap.get(CRServo.class, 'spin');
+        flipperServo = hardwareMap.get(Servo.class, 'flip');
 
         if (shooterAttached) {
             shooter = new ShooterClassMK3(spindexerCRServo, flipperServo, telemetry, hardwareMap, telemetry);
