@@ -7,11 +7,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+//TODO: All this class really needs to do is turn intake on/off. See if you can
+//      refactor this so it exposes only on/off methods. We can add the rest as
+//      needed later.
+
 /**
  * IntakeClass - Handles intake servo/motor logic
  * Supports 1 or 2 intakes, each can be Servo, CRServo, or DcMotor
  */
 public class IntakeClass {
+
+    //TODO: Refactor so that you can have an arbitrary number of servos (not just 2, 4, etc.)
+    //      Also same thing as Shooter, we now know what servo we will be using.
 
     // Hardware
     public Servo intake1Servo;
@@ -30,7 +37,7 @@ public class IntakeClass {
     // Component status
     public boolean intake1Initialized = false;
     public boolean intake2Initialized = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
     // Type tracking
     public String intake1Type = "none";  // "servo", "crservo", "motor", or "none"

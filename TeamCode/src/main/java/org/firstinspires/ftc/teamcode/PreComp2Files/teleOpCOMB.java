@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.PreComp2Files.ObjectDetectionExamplesTeleo
  * TeleOp that uses the MotorPowerRegulator class for shooter control and back motor PID
  * DEBUGGED VERSION - Fixed button debouncing and logic issues
  */
-@TeleOp(name = "TeleOp Comb (Debugged)", group = "Examples")
+@TeleOp(name = "TeleOp Comb (Debugged)_2", group = "Examples")
 @Config
 public class teleOpCOMB extends LinearOpMode {
 

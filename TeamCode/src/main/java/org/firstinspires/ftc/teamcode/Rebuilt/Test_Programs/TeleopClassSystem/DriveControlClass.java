@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.TeleopClassSystem;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_New;
+
+//TODO: This works so I would just leave it for now. We can make changes later.
 
 /**
  * DriveControlClass - Handles drive motor logic
@@ -40,7 +43,7 @@ public class DriveControlClass {
     public double DRIVE_TICKS_PER_REV = 537.7;
 
     // Component initialization status - Public
-    public boolean initialized = false;
+    public boolean initialized;
     public boolean driveMotorsInitialized = false;
     public boolean imuInitialized = false;
     public boolean backPidInitialized = false;
@@ -65,7 +68,7 @@ public class DriveControlClass {
 
                 frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
                 frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-                backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+                backLeftDrive.setDirection(DcMotor.Direction.REVERSE);  // FIXED: Changed from FORWARD to REVERSE
                 backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
                 frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -140,7 +143,7 @@ public class DriveControlClass {
             applyWheelBrake();
         } else if (useFieldCentric) {
             // Get heading from IMU or odometry based on flag
-            double heading = 0;
+            double heading;
             if (useImuForFieldCentric && imuInitialized) {
                 heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             } else {
@@ -172,6 +175,12 @@ public class DriveControlClass {
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backLeftController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backRightController.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -216,10 +225,17 @@ public class DriveControlClass {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        backLeftDrive.setPower(forward - strafe + turn);
-        backRightDrive.setPower(-forward + strafe + turn);
-        frontLeftDrive.setPower(forward + strafe + turn);
-        frontRightDrive.setPower(-forward - strafe + turn);
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        backLeftDrive.setPower(-forward - strafe + turn);
+        backRightDrive.setPower(forward - strafe + turn);
+        frontLeftDrive.setPower(-forward + strafe + turn);
+        frontRightDrive.setPower(forward + strafe + turn);
+        telemetry.addLine("Running");
+
     }
 
     /**
@@ -237,6 +253,11 @@ public class DriveControlClass {
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightController.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Rotate movement vector
         double rotX = strafe * Math.cos(-heading) - forward * Math.sin(-heading);
@@ -285,6 +306,11 @@ public class DriveControlClass {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
         double rotX = strafe * Math.cos(-heading) - forward * Math.sin(-heading);
         double rotY = strafe * Math.sin(-heading) + forward * Math.cos(-heading);
         rotX = rotX * 1.1;
@@ -296,7 +322,7 @@ public class DriveControlClass {
         double backRightPower = (rotY + rotX - turn) / denominator;
 
         frontLeftDrive.setPower(frontLeftPower);
-        backLeftDrive.setPower(backLeftPower);
+        backLeftDrive.setPower(backLeftPower);  // No negation needed - direction set in constructor
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
     }

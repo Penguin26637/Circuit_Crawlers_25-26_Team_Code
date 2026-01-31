@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.TeleopClassSystem;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * TelemetryClass - Handles telemetry display
+ * TelemetryClassMK3 - Handles telemetry display
  * References to other classes are public
+ * Updated to support ShooterClassMK3 with spindexer and flipper
  */
-public class TelemetryClass {
+public class TelemetryClassMK3 {
 
     // Public variables
     public Telemetry telemetry;
@@ -22,17 +23,19 @@ public class TelemetryClass {
     // References to other classes - Public - Set from main teleop
     public DriveControlClass drive;
     public IntakeClass intake;
-    public ShooterClass shooter;
+    public ShooterClassMK3 shooter;
     public OdometryClass odometry;
 
     // Status - Public
     public boolean enabled = false;
     public boolean dashboardEnabled = false;
-    public boolean initialized = false;
+    public boolean initialized;
 
-    public TelemetryClass(Telemetry telemetry, HardwareMap hardwareMap) {
+    public TelemetryClassMK3(Telemetry telemetry, HardwareMap hardwareMap, ShooterClassMK3 shooter) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
+
+        this.shooter = shooter;
 
         try {
             dashboard = FtcDashboard.getInstance();
@@ -41,6 +44,8 @@ public class TelemetryClass {
             initialized = false;
             telemetry.addData("Telemetry Error", e.getMessage());
         }
+
+
     }
 
     public void update(boolean enabled, boolean dashboardEnabled) {
@@ -100,17 +105,31 @@ public class TelemetryClass {
             telemetry.addData("Actual RPM", "%.0f", shooter.getShooterCurrentRPM());
             telemetry.addData("At Target", shooter.getShooterAtTarget(50) ? "✓" : "✗");
 
-            if (shooter.getHinge1Initialized()) {
-                telemetry.addData("Hinge Target", "%.2f", shooter.hinge1TargetPosition);
-                telemetry.addData("Hinge Actual", "%.2f", shooter.getHinge1Position());
-            }
-            if (shooter.getHinge2Initialized()) {
-                telemetry.addData("Hinge Target", "%.2f", shooter.hinge2TargetPosition);
-                telemetry.addData("Hinge Actual", "%.2f", shooter.getHinge2Position());
-            }
+//            if (shooter.getHinge1Initialized()) {
+//                telemetry.addData("Hinge Target", "%.2f", shooter.());
+//                telemetry.addData("Hinge Actual", "%.2f", shooter.getHinge1Position());
+//            }
+//            if (shooter.getHinge2Initialized()) {
+//                telemetry.addData("Hinge Target", "%.2f", shooter.hinge2TargetPosition);
+//                telemetry.addData("Hinge Actual", "%.2f", shooter.getHinge2Position());
+//            }
 
             if (shooter.getMagazineInitialized()) {
                 telemetry.addData("Magazine Power", "%.2f", shooter.magazineTargetPower);
+            }
+
+            if (shooter.getMagazine1Initialized()) {
+                telemetry.addData("Magazine 1 Power", "%.2f", shooter.magazineTargetPower);
+            }
+
+            if (shooter.getSpindexerInitialized()) {
+                telemetry.addData("Spindexer Target Pos", "%.2f", shooter.spindexerTargetPosition);
+                telemetry.addData("Spindexer Target Pwr", "%.2f", shooter.spindexerTargetPower);
+            }
+
+            if (shooter.getFlipperInitialized()) {
+                telemetry.addData("Flipper Target Pos", "%.2f", shooter.flipperTargetPosition);
+                telemetry.addData("Flipper Target Pwr", "%.2f", shooter.flipperTargetPower);
             }
             telemetry.addLine();
         }
@@ -159,17 +178,27 @@ public class TelemetryClass {
             packet.put("Shooter Actual RPM", shooter.getShooterCurrentRPM());
             packet.put("Shooter At Target", shooter.getShooterAtTarget(50));
 
-            if (shooter.getHinge1Initialized()) {
-                packet.put("Hinge 1 Target", shooter.hinge1TargetPosition);
-                packet.put("Hinge 1 Actual", shooter.getHinge1Position());
-            }
-            if (shooter.getHinge2Initialized()) {
-                packet.put("Hinge 2 Target", shooter.hinge2TargetPosition);
-                packet.put("Hinge 2 Actual", shooter.getHinge2Position());
-            }
+//            if (shooter.getHinge1Initialized()) {
+//                packet.put("Hinge 1 Target", shooter.hinge1TargetPosition);
+//                packet.put("Hinge 1 Actual", shooter.getHinge1Position());
+//            }
+//            if (shooter.getHinge2Initialized()) {
+//                packet.put("Hinge 2 Target", shooter.hinge2TargetPosition);
+//                packet.put("Hinge 2 Actual", shooter.getHinge2Position());
+//            }
 
             if (shooter.getMagazineInitialized()) {
                 packet.put("Magazine Power", shooter.magazineTargetPower);
+            }
+
+            if (shooter.getSpindexerInitialized()) {
+                packet.put("Spindexer Target Position", shooter.spindexerTargetPosition);
+                packet.put("Spindexer Target Power", shooter.spindexerTargetPower);
+            }
+
+            if (shooter.getFlipperInitialized()) {
+                packet.put("Flipper Target Position", shooter.flipperTargetPosition);
+                packet.put("Flipper Target Power", shooter.flipperTargetPower);
             }
         }
 

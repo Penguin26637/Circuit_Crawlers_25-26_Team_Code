@@ -279,11 +279,7 @@ public class AutoComb_New extends LinearOpMode {
         }
     }
 
-    /**
-     * Control the shooter hinge position
-     * @param position "up" for shooting position, "down" for storage position
-     */
-//    public void shooterHinge(String position) {
+    //    public void shooterHinge(String position) {
 //        if (position.equalsIgnoreCase("up")) {
 //            shooterHinge.setPosition(SHOOTER_HINGE_UP);
 //            telemetry.addData("Shooter Hinge", "Up");

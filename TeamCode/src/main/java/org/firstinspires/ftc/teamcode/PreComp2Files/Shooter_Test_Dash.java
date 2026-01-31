@@ -22,7 +22,7 @@ public class Shooter_Test_Dash extends OpMode {
     // Motor spec: 6000 RPM no-load @ 12V
     // MEASURED: 1400 RPM at full power with flywheel attached
     // This is your actual max - heavy flywheel causes significant load
-    public static double MAX_RPM_UNDER_LOAD = 1400.0;  // Empirically determined
+    public static double MAX_RPM_UNDER_LOAD = 600;  // Empirically determined
 
     // ============= Controller Gains (Tune These) ============
     // kV: At 1400 RPM, we want ~95% power (leaving 5% for PID correction)
@@ -53,7 +53,7 @@ public class Shooter_Test_Dash extends OpMode {
 
     @Override
     public void init() {
-        flywheel = hardwareMap.get(DcMotorEx.class, "shooter");
+        flywheel = hardwareMap.get(DcMotorEx.class, "s");
         flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

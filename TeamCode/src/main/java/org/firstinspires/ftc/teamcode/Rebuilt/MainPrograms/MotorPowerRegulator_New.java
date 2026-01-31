@@ -39,6 +39,8 @@ public class MotorPowerRegulator_New {
 
     public static double targetRPM = 980.0;
 
+    public double velocityTicksPerSec = 0;
+
     private FtcDashboard dashboard;
 
     public MotorPowerRegulator_New(HardwareMap hardwareMap, Telemetry telemetry, String motorName) {
@@ -48,7 +50,7 @@ public class MotorPowerRegulator_New {
 
         flywheel = hardwareMap.get(DcMotorEx.class, motorName);
         flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // ✓ Confirmed: RUN_WITHOUT_ENCODER
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -60,6 +62,7 @@ public class MotorPowerRegulator_New {
         telemetry.addLine("=== " + motorName.toUpperCase() + " FLYWHEEL INITIALIZED ===");
         telemetry.addLine("Motor: 6000 RPM no-load spec");
         telemetry.addLine("Measured: 1400 RPM at full power");
+        telemetry.addLine("Run Mode: RUN_WITHOUT_ENCODER");
         telemetry.addLine("System is now calibrated!");
         telemetry.update();
     }
@@ -182,6 +185,7 @@ public class MotorPowerRegulator_New {
         this.flywheel.setPower(0);
         this.targetRPM = 0;
         this.integral = 0;
+        // Note: currentRPM will continue to update if loop() is still being called
     }
 
     public void setPIDGains(double kp, double ki, double kd) {
@@ -225,7 +229,8 @@ public class MotorPowerRegulator_New {
 
         lastPosition = pos;
 
-        double velocityTicksPerSec = flywheel.getVelocity();
+        // ✓ FIXED: Removed "double" to use class variable instead of local variable
+        velocityTicksPerSec = flywheel.getVelocity();
         currentRPM = (velocityTicksPerSec / TICKS_PER_REV) * 60.0;
 
         double ff = 0.0;
@@ -281,7 +286,8 @@ public class MotorPowerRegulator_New {
 
         targetRPM = Math.max(0, Math.min(MAX_RPM_UNDER_LOAD, targetRPM));
 
-        telemetry.addData("🎯 " + motorName + " Target", "%.0f RPM",this.targetRPM);
+        // Add data to telemetry but DON'T call update() - let the main telemetry class handle that
+        telemetry.addData("🎯 " + motorName + " Target", "%.0f RPM", this.targetRPM);
         telemetry.addData("⚡ " + motorName + " Actual", "%.0f RPM (%.1f%%)",
                 this.currentRPM, this.targetRPM != 0 ? (this.currentRPM / this.targetRPM) * 100 : 0);
         telemetry.addData("🔋 " + motorName + " Power", "%.2f", output);
@@ -293,6 +299,7 @@ public class MotorPowerRegulator_New {
             telemetry.addLine("⚠️ " + motorName + " SATURATED");
         }
 
-        telemetry.update();
+        // ✓ FIXED: Removed telemetry.update() - let main telemetry class call it
+        // This prevents the motor controller from clearing/overwriting the main telemetry display
     }
 }
