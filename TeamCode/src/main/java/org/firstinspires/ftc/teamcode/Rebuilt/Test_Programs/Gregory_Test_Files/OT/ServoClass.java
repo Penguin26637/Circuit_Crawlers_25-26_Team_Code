@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files;
+package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;

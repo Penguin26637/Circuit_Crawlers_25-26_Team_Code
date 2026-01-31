@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files;
+package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,16 +27,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class ServoTeleOpDemo extends OpMode {
 
     // Servo objects
-    private ServoClass claw;
-    private ServoClass wrist;
-    private ServoClass intake;
+    private org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass claw;
+    private org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass wrist;
+    private org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass intake;
 
     @Override
     public void init() {
         // Initialize servos
-        claw = new ServoClass("claw", ServoClass.ServoType.STANDARD_SERVO);
-        wrist = new ServoClass("wrist", ServoClass.ServoType.CONTINUOUS_SERVO);
-        intake = new ServoClass("i", ServoClass.ServoType.CONTINUOUS_SERVO);
+        claw = new org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass("claw", org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass.ServoType.STANDARD_SERVO);
+        wrist = new org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass("wrist", org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass.ServoType.CONTINUOUS_SERVO);
+        intake = new org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass("i", org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT.ServoClass.ServoType.CONTINUOUS_SERVO);
 
         // Initialize hardware
         claw.init(hardwareMap);
