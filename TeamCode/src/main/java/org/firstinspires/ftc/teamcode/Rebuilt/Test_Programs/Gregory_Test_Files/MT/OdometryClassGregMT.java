@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * OdometryClass - Handles odometry calculations
  * All variables are public and controlled from main teleop
  */
-public class OdometryClassGreg {
+public class OdometryClassGregMT {
 
     // Hardware - Public
     public DcMotor odoLeft, odoRight, odoPerp;
@@ -40,7 +40,7 @@ public class OdometryClassGreg {
     /**
      * Constructor - just initializes hardware
      */
-    public OdometryClassGreg(HardwareMap hardwareMap, Telemetry telemetry) {
+    public OdometryClassGregMT(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.multitelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

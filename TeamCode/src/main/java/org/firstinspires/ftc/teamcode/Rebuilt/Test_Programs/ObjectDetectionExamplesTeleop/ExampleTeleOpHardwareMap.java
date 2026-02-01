@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.PreComp2Files.ObjectDetectionExamplesTeleop;
+package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.ObjectDetectionExamplesTeleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;

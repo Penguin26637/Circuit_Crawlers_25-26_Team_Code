@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+
 /**
  * TeleOp Demo for ServoClass
  *
@@ -25,13 +26,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *   RIGHT_TRIGGER - Intake slow forward (power 0.5)
  *   (Release all buttons to stop intake)
  */
-@TeleOp(name = "Servo Demo - TeleOp", group = "Demo")
-public class ServoTeleOpDemo extends OpMode {
+@TeleOp(name = "Servo Demo - TeleOp MT", group = "Demo")
+public class ServoTeleOpDemoMT extends OpMode {
 
     // Servo objects
-    private ServoClass claw;
-    private ServoClass wrist;
-    private ServoClass intake;
+    private ServoClassMT claw;
+    private ServoClassMT wrist;
+    private ServoClassMT intake;
 
     // MultipleTelemetry
     private MultipleTelemetry multitelemetry;
@@ -42,9 +43,9 @@ public class ServoTeleOpDemo extends OpMode {
         multitelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Initialize servos
-        claw = new ServoClass("claw", ServoClass.ServoType.STANDARD_SERVO);
-        wrist = new ServoClass("wrist", ServoClass.ServoType.CONTINUOUS_SERVO);
-        intake = new ServoClass("i", ServoClass.ServoType.CONTINUOUS_SERVO);
+        claw = new ServoClassMT("claw", ServoClassMT.ServoType.STANDARD_SERVO);
+        wrist = new ServoClassMT("wrist", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+        intake = new ServoClassMT("i", ServoClassMT.ServoType.CONTINUOUS_SERVO);
 
         // Initialize hardware
         claw.init(hardwareMap);

@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_New;
 
-@TeleOp(name = "ErikandBradyBrokeEverything", group = "Main")
-public class ErikandBradyBrokeEverything extends LinearOpMode {
+@TeleOp(name = "ErikandBradyBrokeEverythingMT", group = "Main")
+public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
 
     // Hardware
-    private DriveControlClassGreg drive;
+    private DriveControlClassGregMT drive;
     private DcMotor odoLeft, odoRight, odoPerp;
-    private ServoClass intakeLeft, intakeRight, spindexer, flipper;
+    private ServoClassMT intakeLeft, intakeRight, spindexer, flipper;
     private MotorPowerRegulator_New shooter;
     private MultipleTelemetry multitelemetry;
 
@@ -40,16 +40,16 @@ public class ErikandBradyBrokeEverything extends LinearOpMode {
 
         try {
             // Initialize drive
-            drive = new DriveControlClassGreg(hardwareMap, multitelemetry, true, true, false);
+            drive = new DriveControlClassGregMT(hardwareMap, multitelemetry, true, true, false);
             drive.nerf = NORMAL_SPEED;
             drive.useFieldCentric = false;
             drive.useImuForFieldCentric = true;
 
             // Initialize servos
-            intakeLeft = new ServoClass("intakeLeft", ServoClass.ServoType.CONTINUOUS_SERVO);
-            intakeRight = new ServoClass("intakeRight", ServoClass.ServoType.CONTINUOUS_SERVO);
-            spindexer = new ServoClass("spindexer", ServoClass.ServoType.CONTINUOUS_SERVO);
-            flipper = new ServoClass("flipper", ServoClass.ServoType.STANDARD_SERVO);
+            intakeLeft = new ServoClassMT("intakeLeft", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+            intakeRight = new ServoClassMT("intakeRight", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+            spindexer = new ServoClassMT("spindexer", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+            flipper = new ServoClassMT("flipper", ServoClassMT.ServoType.STANDARD_SERVO);
 
             intakeLeft.init(hardwareMap);
             intakeRight.init(hardwareMap);

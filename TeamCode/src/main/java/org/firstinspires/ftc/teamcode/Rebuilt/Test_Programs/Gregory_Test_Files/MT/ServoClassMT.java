@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
  * Represents an FTC servo that can be positioned at any value.
  * Supports both standard Servo and CRServo types.
  */
-class ServoClass {
+class ServoClassMT {
     public enum ServoType {
         STANDARD_SERVO,
         CONTINUOUS_SERVO
@@ -19,7 +19,7 @@ class ServoClass {
     private Servo servo;           // For standard servos
     private CRServo crServo;       // For continuous rotation servos
 
-    public ServoClass(String name, ServoType type) {
+    public ServoClassMT(String name, ServoType type) {
         this.hardwareMapName = name;
         this.type = type;
     }

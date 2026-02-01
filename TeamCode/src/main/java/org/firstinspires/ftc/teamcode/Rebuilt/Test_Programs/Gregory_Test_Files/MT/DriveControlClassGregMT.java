@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_N
  * DriveControlClass - Handles drive motor logic
  * All variables are public and controlled from main teleop
  */
-public class DriveControlClassGreg {
+public class DriveControlClassGregMT {
 
     // Hardware - Public
     public DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
@@ -55,7 +55,7 @@ public class DriveControlClassGreg {
     /**
      * Constructor - initializes components independently
      */
-    public DriveControlClassGreg(HardwareMap hardwareMap, Telemetry telemetry, boolean initDriveMotors, boolean initImu, boolean initBackPid) {
+    public DriveControlClassGregMT(HardwareMap hardwareMap, Telemetry telemetry, boolean initDriveMotors, boolean initImu, boolean initBackPid) {
         this.telemetry = telemetry;
         this.multitelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
