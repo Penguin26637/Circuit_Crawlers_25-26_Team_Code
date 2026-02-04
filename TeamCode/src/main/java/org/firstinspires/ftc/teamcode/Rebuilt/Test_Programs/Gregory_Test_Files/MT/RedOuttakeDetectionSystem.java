@@ -123,10 +123,10 @@ RedOuttakeDetectionSystem {
 
             // Initialize Webcam Vision for RED detection
             redLocator = new ColorBlobLocatorProcessor.Builder()
-                    .setTargetColorRange(ColorRange.RED)
+                    .setTargetColorRange(ColorRange.BLUE)
                     .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                     .setDrawContours(true)
-                    .setCircleFitColor(Color.RED)
+                    .setCircleFitColor(Color.BLUE)
                     .setBlurSize(5)
                     .build();
 
