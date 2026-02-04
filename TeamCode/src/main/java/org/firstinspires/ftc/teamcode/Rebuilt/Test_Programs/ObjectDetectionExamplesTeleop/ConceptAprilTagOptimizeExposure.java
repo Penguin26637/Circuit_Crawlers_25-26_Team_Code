@@ -27,12 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.ObjectDetectionExamplesTeleop;
 
+import android.util.Size;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
@@ -64,7 +68,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Optimize AprilTag Exposure", group = "Concept")
-@Disabled
+//@Disabled
 public class ConceptAprilTagOptimizeExposure extends LinearOpMode
 {
     private VisionPortal visionPortal = null;        // Used to manage the video source.
@@ -85,6 +89,7 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
     boolean lastExpDn = false;
     boolean lastGainUp = false;
     boolean lastGainDn = false;
+    private FtcDashboard dashboard;
     @Override public void runOpMode()
     {
         // Initialize the Apriltag Detection process
@@ -107,6 +112,12 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
             telemetry.addLine("Find lowest Exposure that gives reliable detection.");
             telemetry.addLine("Use Left bump/trig to adjust Exposure.");
             telemetry.addLine("Use Right bump/trig to adjust Gain.\n");
+            dashboard = FtcDashboard.getInstance();
+
+
+            // Start camera stream to dashboard
+            dashboard.startCameraStream(visionPortal, 60);
+
 
             // Display how many Tags Detected
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -162,6 +173,8 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
 
         // Create the WEBCAM vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
+                .setCameraResolution(new Size(1920, 1080))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();

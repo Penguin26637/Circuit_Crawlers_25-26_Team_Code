@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.vision.VisionPortal;
+
 
 @TeleOp(name = "Red Detection Outtake Test", group = "Test")
 public class RedDetectionOuttakeTest extends LinearOpMode {
@@ -42,20 +44,20 @@ public class RedDetectionOuttakeTest extends LinearOpMode {
         // Initialize red detection system
         outtakeSystem = new RedOuttakeDetectionSystem(hardwareMap);
 
-        if (!outtakeSystem.isInitialized()) {
-            multitelemetry.addData("Error", "Outtake system failed to initialize!");
-        } else {
-            multitelemetry.addData("Camera", "Streaming to Dashboard");
-            // Ensure camera stream is started
-            outtakeSystem.startCameraStream();
-
-            // OPTIONAL: Configure ROI to focus on bottom half of frame
-            // Uncomment and adjust these values as needed:
-            // RedOuttakeDetectionSystem.roiLeftPercent = 0.0;
-            // RedOuttakeDetectionSystem.roiTopPercent = 0.5;
-            // RedOuttakeDetectionSystem.roiRightPercent = 1.0;
-            // RedOuttakeDetectionSystem.roiBottomPercent = 1.0;
-        }
+//        if (!outtakeSystem.isInitialized()) {
+//            multitelemetry.addData("Error", "Outtake system failed to initialize!");
+//        } else {
+//            multitelemetry.addData("Camera", "Streaming to Dashboard");
+//            // Ensure camera stream is started
+//            outtakeSystem.startCameraStream();
+//
+//            // OPTIONAL: Configure ROI to focus on bottom half of frame
+//            // Uncomment and adjust these values as needed:
+//            // RedOuttakeDetectionSystem.roiLeftPercent = 0.0;
+//            // RedOuttakeDetectionSystem.roiTopPercent = 0.5;
+//            // RedOuttakeDetectionSystem.roiRightPercent = 1.0;
+//            // RedOuttakeDetectionSystem.roiBottomPercent = 1.0;
+//        }
 
         multitelemetry.addData("Status", "Ready! Press Play");
         multitelemetry.addLine();
@@ -65,12 +67,20 @@ public class RedDetectionOuttakeTest extends LinearOpMode {
         multitelemetry.addData("Dashboard URL", "http://192.168.43.1:8080");
         multitelemetry.update();
 
+//        outtakeSystem.startCameraStream();
+        while(outtakeSystem.getCameraState() != VisionPortal.CameraState.CAMERA_DEVICE_READY) {
+            multitelemetry.addData("Camera State", "Not Ready");
+            multitelemetry.update();
+        }
+        multitelemetry.addData("Camera State", "Ready");
+        multitelemetry.update();
         waitForStart();
 
         // Start camera stream again after play is pressed
-        if (outtakeSystem.isInitialized()) {
-            outtakeSystem.startCameraStream();
-        }
+//        if (outtakeSystem.isInitialized()) {
+//            outtakeSystem.startCameraStream();
+//        }
+
 
         while (opModeIsActive()) {
             // Update the red detection system
@@ -96,7 +106,8 @@ public class RedDetectionOuttakeTest extends LinearOpMode {
                 // Limit switch not pressed - run spindexer forward
                 safeGoToPosition(Spindexer, SPINDEXER_FORWARD);
             }
-
+            multitelemetry.addData("Red Blobs", outtakeSystem.getRedBlobs() + "");
+            multitelemetry.update();
             // Update telemetry
             updateTelemetry(limitSwitchPressed);
 
@@ -104,7 +115,9 @@ public class RedDetectionOuttakeTest extends LinearOpMode {
         }
 
         // Cleanup
+        outtakeSystem.stopCameraStream();
         outtakeSystem.stop();
+
     }
 
     private ServoClassMT safeInitServo(String name, ServoClassMT.ServoType type) {

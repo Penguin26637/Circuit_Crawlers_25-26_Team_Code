@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.MT;
 
+
 import android.graphics.Color;
 import android.util.Size;
 
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.FocusControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
@@ -20,6 +22,9 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ColorSpace;
+import org.opencv.core.Scalar;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -63,7 +68,8 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  */
 @Config
-public class RedOuttakeDetectionSystem {
+public class
+RedOuttakeDetectionSystem {
 
     // ==================== CONFIGURATION PARAMETERS ====================
 
@@ -72,14 +78,14 @@ public class RedOuttakeDetectionSystem {
 
     // Region of Interest (ROI) settings - as percentage of frame
     // 0.0 = left/top edge, 1.0 = right/bottom edge
-    public static double roiLeftPercent = 0.0;      // Left boundary (0-1)
-    public static double roiTopPercent = 0.0;       // Top boundary (0-1)
+    public static double roiLeftPercent = 1.0;      // Left boundary (0-1)
+    public static double roiTopPercent = 1.0;       // Top boundary (0-1)
     public static double roiRightPercent = 1.0;     // Right boundary (0-1)
     public static double roiBottomPercent = 1.0;    // Bottom boundary (0-1)
 
     // Object detection thresholds
-    public static int minContourArea = 200;
-    public static int maxContourArea = 20000;
+    public static int minContourArea = 2200;
+    public static int maxContourArea = 12000;
     public static double minCircularity = 0.5;
 
     // Timing parameters
@@ -93,10 +99,7 @@ public class RedOuttakeDetectionSystem {
     private ColorBlobLocatorProcessor redLocator;
     private FtcDashboard dashboard;
 
-    // Camera controls
-    private ExposureControl exposureControl;
-    private WhiteBalanceControl whiteBalanceControl;
-    private PtzControl ptzControl;
+
 
     // ==================== STATE VARIABLES ====================
 
@@ -108,6 +111,7 @@ public class RedOuttakeDetectionSystem {
     // Initialization flag
     private boolean initialized = false;
 
+
     // ==================== CONSTRUCTOR ====================
 
     /**
@@ -116,7 +120,7 @@ public class RedOuttakeDetectionSystem {
      * @param hardwareMap The hardware map from your OpMode
      */
     public RedOuttakeDetectionSystem(HardwareMap hardwareMap) {
-        try {
+
             // Initialize Webcam Vision for RED detection
             redLocator = new ColorBlobLocatorProcessor.Builder()
                     .setTargetColorRange(ColorRange.RED)
@@ -128,25 +132,24 @@ public class RedOuttakeDetectionSystem {
 
             visionPortal = new VisionPortal.Builder()
                     .addProcessor(redLocator)
-                    .setCameraResolution(new Size(640, 480))
+                    .enableLiveView(true)
+                    .setAutoStopLiveView(false)
+                    .setCameraResolution(new Size(640,360))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                     .build();
 
-            // Initialize Dashboard
-            dashboard = FtcDashboard.getInstance();
 
-            // Start camera stream to dashboard
-            dashboard.startCameraStream(visionPortal, 0);
+            // Initialize Dashboard
 
             // Start cooldown timer
             cooldownTimer.reset();
 
             initialized = true;
+    }
 
-        } catch (Exception e) {
-            initialized = false;
-            // System will report not initialized
-        }
+    public VisionPortal.CameraState getCameraState() {
+        return visionPortal.getCameraState();
     }
 
     // ==================== PUBLIC UPDATE METHOD ====================
@@ -156,11 +159,10 @@ public class RedOuttakeDetectionSystem {
      * This method performs all detection and decision logic
      */
     public void update() {
-        if (!initialized) return;
-
+        dashboard = FtcDashboard.getInstance();
+        dashboard.startCameraStream(visionPortal, 10);
         // Step 1: Configure camera controls
         configureCameraControls();
-
         // Step 2: Detect red object and determine flip decision
         detectRedObjectAndDecide();
     }
@@ -191,6 +193,11 @@ public class RedOuttakeDetectionSystem {
         return redDetected;
     }
 
+    public List<ColorBlobLocatorProcessor.Blob>  getRedBlobs() {
+        List<ColorBlobLocatorProcessor.Blob> redBlobs2 = redLocator.getBlobs();
+        return redBlobs2;
+    }
+
     /**
      * Returns whether the system initialized successfully
      * @return true if all hardware initialized correctly
@@ -217,6 +224,7 @@ public class RedOuttakeDetectionSystem {
         packet.put("Object Color", detectedObjectColor);
         packet.put("FLIP UP", shouldFlipUp);
         packet.put("Flip Timer Active", flipTimerActive);
+
 
         // Add detection circle info
         List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
@@ -295,42 +303,43 @@ public class RedOuttakeDetectionSystem {
      * Start/restart the camera stream to dashboard
      */
     public void startCameraStream() {
-        if (dashboard != null && visionPortal != null) {
-            dashboard.startCameraStream(visionPortal, 0);
-        }
+        dashboard = FtcDashboard.getInstance();
+        dashboard.startCameraStream(visionPortal, 10);
     }
 
     /**
      * Stop the camera stream
      */
     public void stopCameraStream() {
-        if (dashboard != null) {
-            dashboard.stopCameraStream();
-        }
+        dashboard = FtcDashboard.getInstance();
+        dashboard.stopCameraStream();
     }
 
     // ==================== PRIVATE DETECTION METHODS ====================
 
     private void configureCameraControls() {
-        try {
-            exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
-            ptzControl = visionPortal.getCameraControl(PtzControl.class);
 
-            if (exposureControl != null) {
-                exposureControl.setExposure(1, TimeUnit.MILLISECONDS);
-            }
-            if (whiteBalanceControl != null) {
-                whiteBalanceControl.setWhiteBalanceTemperature(6500);
-            }
-            if (ptzControl != null) {
+            // Camera controls
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            WhiteBalanceControl whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            PtzControl ptzControl = visionPortal.getCameraControl(PtzControl.class);
+
+
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+            exposureControl.setExposure((long) 35, TimeUnit.MILLISECONDS);
+
+
+            whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
+            whiteBalanceControl.setWhiteBalanceTemperature(3500);
+
+
+
+            gainControl.setGain(15);
+
+
                 // Set zoom to minimum (fully zoomed out)
-                int minZoom = ptzControl.getMinZoom();
-                ptzControl.setZoom(minZoom);
-            }
-        } catch (Exception e) {
-            // Camera controls may not be ready yet
-        }
+            ptzControl.setZoom(100);
     }
 
     private void detectRedObjectAndDecide() {
@@ -352,9 +361,9 @@ public class RedOuttakeDetectionSystem {
         redDetected = false;
 
         // Check cooldown period
-        if (cooldownTimer.seconds() < detectionCooldownSeconds) {
-            return;
-        }
+//        if (cooldownTimer.seconds() < detectionCooldownSeconds) {
+//            return;
+//        }
 
         // Get red detections from webcam
         List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
@@ -371,7 +380,7 @@ public class RedOuttakeDetectionSystem {
 
         // Calculate ROI boundaries in pixels
         int frameWidth = 640;
-        int frameHeight = 480;
+        int frameHeight = 360;
         int roiLeft = (int) (roiLeftPercent * frameWidth);
         int roiTop = (int) (roiTopPercent * frameHeight);
         int roiRight = (int) (roiRightPercent * frameWidth);

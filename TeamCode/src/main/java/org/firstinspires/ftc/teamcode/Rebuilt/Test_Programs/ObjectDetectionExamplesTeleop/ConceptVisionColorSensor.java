@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.ObjectDetectionExamplesTeleop;
 
 import android.util.Size;
 
@@ -29,15 +29,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
-
-import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates how to use a video source (camera) as a color sensor
@@ -65,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Disabled
+//@Disabled
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
 public class ConceptVisionColorSensor extends LinearOpMode
 {
@@ -130,26 +124,6 @@ public class ConceptVisionColorSensor extends LinearOpMode
         // WARNING:  To view the stream preview on the Driver Station, this code runs in INIT mode.
         while (opModeIsActive() || opModeInInit())
         {
-            ExposureControl exposureControl = portal.getCameraControl(ExposureControl.class);
-            WhiteBalanceControl whiteBalanceControl = portal.getCameraControl(WhiteBalanceControl.class);
-            GainControl gainControl = portal.getCameraControl(GainControl.class);
-            PtzControl ptzControl = portal.getCameraControl(PtzControl.class);
-
-
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-            exposureControl.setExposure((long) 35, TimeUnit.MILLISECONDS);
-
-
-            whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
-            whiteBalanceControl.setWhiteBalanceTemperature(3500);
-
-
-
-            gainControl.setGain(15);
-
-
-            // Set zoom to minimum (fully zoomed out)
-            ptzControl.setZoom(100);
             telemetry.addLine("Preview on/off: 3 dots, Camera Stream\n");
 
             // Request the most recent color analysis.  This will return the closest matching
