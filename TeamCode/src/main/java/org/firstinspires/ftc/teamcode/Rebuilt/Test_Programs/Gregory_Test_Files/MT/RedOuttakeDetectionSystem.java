@@ -68,8 +68,7 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  */
 @Config
-public class
-RedOuttakeDetectionSystem {
+public class RedOuttakeDetectionSystem {
 
     // ==================== CONFIGURATION PARAMETERS ====================
 
@@ -78,25 +77,28 @@ RedOuttakeDetectionSystem {
 
     // Region of Interest (ROI) settings - as percentage of frame
     // 0.0 = left/top edge, 1.0 = right/bottom edge
-    public static double roiLeftPercent = 1.0;      // Left boundary (0-1)
-    public static double roiTopPercent = 1.0;       // Top boundary (0-1)
-    public static double roiRightPercent = 1.0;     // Right boundary (0-1)
-    public static double roiBottomPercent = 1.0;    // Bottom boundary (0-1)
+    public static double roiLeftPercent = 0.35;      // Left boundary (0-1)
+    public static double roiTopPercent = 0.4;       // Top boundary (0-1)
+    public static double roiRightPercent = 0.8;   // Right boundary (0-1)
+    public static double roiBottomPercent = 0.9;  // Bottom boundary (0-1)
 
     // Object detection thresholds
-    public static int minContourArea = 2200;
-    public static int maxContourArea = 12000;
-    public static double minCircularity = 0.5;
+    public static int minContourArea = 20000;
+    public static int maxContourArea = 35000;
+    public static double minCircularity = 0.8;
 
     // Timing parameters
     public static double detectionCooldownSeconds = 0.5;
     public static double flipUpDurationMs = 1000;  // How long to keep flipper up after detection
+
+    public static List<ColorBlobLocatorProcessor.Blob> redBlobs;
 
     // ==================== HARDWARE COMPONENTS ====================
     private ElapsedTime cooldownTimer = new ElapsedTime();
     private ElapsedTime flipTimer = new ElapsedTime();
     private VisionPortal visionPortal;
     private ColorBlobLocatorProcessor redLocator;
+    private ROIDrawProcessor roiDrawProcessor;  // NEW: ROI visualization
     private FtcDashboard dashboard;
 
 
@@ -121,31 +123,36 @@ RedOuttakeDetectionSystem {
      */
     public RedOuttakeDetectionSystem(HardwareMap hardwareMap) {
 
-            // Initialize Webcam Vision for RED detection
-            redLocator = new ColorBlobLocatorProcessor.Builder()
-                    .setTargetColorRange(ColorRange.BLUE)
-                    .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-                    .setDrawContours(true)
-                    .setCircleFitColor(Color.BLUE)
-                    .setBlurSize(5)
-                    .build();
+        // Initialize ROI drawing processor
+        roiDrawProcessor = new ROIDrawProcessor();
+        roiDrawProcessor.updateROI(roiLeftPercent, roiTopPercent, roiRightPercent, roiBottomPercent);
 
-            visionPortal = new VisionPortal.Builder()
-                    .addProcessor(redLocator)
-                    .enableLiveView(true)
-                    .setAutoStopLiveView(false)
-                    .setCameraResolution(new Size(640,360))
-                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .build();
+        // Initialize Webcam Vision for RED detection
+        redLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                .setDrawContours(true)
+                .setCircleFitColor(Color.BLUE)
+                .setBlurSize(5)
+                .build();
+
+        visionPortal = new VisionPortal.Builder()
+                .addProcessor(redLocator)
+                .addProcessor(roiDrawProcessor)  // NEW: Add ROI visualization
+                .enableLiveView(true)
+                .setAutoStopLiveView(false)
+                .setCameraResolution(new Size(640,360))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .build();
 
 
-            // Initialize Dashboard
+        // Initialize Dashboard
 
-            // Start cooldown timer
-            cooldownTimer.reset();
+        // Start cooldown timer
+        cooldownTimer.reset();
 
-            initialized = true;
+        initialized = true;
     }
 
     public VisionPortal.CameraState getCameraState() {
@@ -160,9 +167,13 @@ RedOuttakeDetectionSystem {
      */
     public void update() {
         dashboard = FtcDashboard.getInstance();
-        dashboard.startCameraStream(visionPortal, 10);
+        dashboard.startCameraStream(visionPortal, 60);
+
+        // Update ROI visualization with current settings
+
         // Step 1: Configure camera controls
         configureCameraControls();
+
         // Step 2: Detect red object and determine flip decision
         detectRedObjectAndDecide();
     }
@@ -194,8 +205,7 @@ RedOuttakeDetectionSystem {
     }
 
     public List<ColorBlobLocatorProcessor.Blob>  getRedBlobs() {
-        List<ColorBlobLocatorProcessor.Blob> redBlobs2 = redLocator.getBlobs();
-        return redBlobs2;
+        return redBlobs;
     }
 
     /**
@@ -227,7 +237,7 @@ RedOuttakeDetectionSystem {
 
 
         // Add detection circle info
-        List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
+        redBlobs = redLocator.getBlobs();
         packet.put("Red Blobs Detected", redBlobs.size());
 
         if (!redBlobs.isEmpty()) {
@@ -241,7 +251,7 @@ RedOuttakeDetectionSystem {
 
         // Driver Station telemetry
         telemetry.addLine("=== OUTTAKE SYSTEM ===");
-        telemetry.addData("Red Detected", redDetected ? "YES" : "NO");
+        telemetry.addData("Purple Detected", redDetected ? "YES" : "NO");
         telemetry.addData("Object Color", detectedObjectColor);
         telemetry.addData("FLIP UP", shouldFlipUp ? "YES" : "NO");
         telemetry.addData("Blobs Detected", redBlobs.size());
@@ -304,7 +314,7 @@ RedOuttakeDetectionSystem {
      */
     public void startCameraStream() {
         dashboard = FtcDashboard.getInstance();
-        dashboard.startCameraStream(visionPortal, 10);
+        dashboard.startCameraStream(visionPortal, 60);
     }
 
     /**
@@ -319,27 +329,27 @@ RedOuttakeDetectionSystem {
 
     private void configureCameraControls() {
 
-            // Camera controls
-            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            WhiteBalanceControl whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
-            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            PtzControl ptzControl = visionPortal.getCameraControl(PtzControl.class);
+        // Camera controls
+        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        WhiteBalanceControl whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
+        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        PtzControl ptzControl = visionPortal.getCameraControl(PtzControl.class);
 
 
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-            exposureControl.setExposure((long) 35, TimeUnit.MILLISECONDS);
+        exposureControl.setMode(ExposureControl.Mode.Manual);
+        exposureControl.setExposure((long) 35, TimeUnit.MILLISECONDS);
 
 
-            whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
-            whiteBalanceControl.setWhiteBalanceTemperature(3500);
+        whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
+        whiteBalanceControl.setWhiteBalanceTemperature(3500);
 
 
 
-            gainControl.setGain(15);
+        gainControl.setGain(45);
 
 
-                // Set zoom to minimum (fully zoomed out)
-            ptzControl.setZoom(100);
+        // Set zoom to minimum (fully zoomed out)
+        ptzControl.setZoom(100);
     }
 
     private void detectRedObjectAndDecide() {
@@ -366,7 +376,7 @@ RedOuttakeDetectionSystem {
 //        }
 
         // Get red detections from webcam
-        List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
+        redBlobs = redLocator.getBlobs();
 
         // Filter blobs by area
         ColorBlobLocatorProcessor.Util.filterByCriteria(
@@ -376,7 +386,11 @@ RedOuttakeDetectionSystem {
         // Filter blobs by circularity
         ColorBlobLocatorProcessor.Util.filterByCriteria(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
-                minCircularity, 1.0, redBlobs);
+                0.3, 1.0, redBlobs);
+
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO,
+                1, 3, redBlobs);
 
         // Calculate ROI boundaries in pixels
         int frameWidth = 640;
@@ -407,7 +421,7 @@ RedOuttakeDetectionSystem {
             if (dist < minDistance) {
                 minDistance = dist;
                 closestCircle = c;
-                webcamColor = "Red";
+                webcamColor = "Purple";
             }
         }
 
@@ -419,7 +433,7 @@ RedOuttakeDetectionSystem {
         }
 
         // Red detected by webcam
-        detectedObjectColor = "Red";
+        detectedObjectColor = "Purple";
         redDetected = true;
 
         // Activate flip if red is detected
