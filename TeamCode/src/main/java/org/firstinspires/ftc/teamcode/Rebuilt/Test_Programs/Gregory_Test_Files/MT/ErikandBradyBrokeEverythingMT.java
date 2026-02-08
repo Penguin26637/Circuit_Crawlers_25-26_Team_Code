@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.MT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_New;
 
 @TeleOp(name = "ErikandBradyBrokeEverythingMT", group = "Main")
+@Config
 public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
 
     // Hardware
@@ -22,7 +24,7 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
     // Configuration
     private static final double NORMAL_SPEED = 0.75, SLOW_SPEED = 0.1;
     private static final boolean ENABLE_ODOMETRY = true;
-    private static final double SHOOTER_ACTIVE_RPM = 1400.0, SHOOTER_IDLE_RPM = 700.0;
+    private static final double SHOOTER_ACTIVE_RPM = 1400.0, SHOOTER_IDLE_RPM = 0;
     private static final double TICKS_PER_INCH = 337.2, TRACK_WIDTH = 13.5, PERP_OFFSET = 8.0;
 
     // State
@@ -31,6 +33,9 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
     private boolean odometryInitialized = false;
     private boolean lastGamepad1A = false, lastGamepad1X = false, lastGamepad1RightBumper = false;
     private boolean lastGamepad1Start = false, lastGamepad1Back = false;
+    private boolean lastGamepad2Y = false;
+
+    private boolean auto_shoot = false;
 
     @Override
     public void runOpMode() {
@@ -46,8 +51,8 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             drive.useImuForFieldCentric = true;
 
             // Initialize servos
-            intakeLeft = new ServoClassMT("intakeLeft", ServoClassMT.ServoType.CONTINUOUS_SERVO);
-            intakeRight = new ServoClassMT("intakeRight", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+            intakeLeft = new ServoClassMT("leftintake", ServoClassMT.ServoType.CONTINUOUS_SERVO);
+            intakeRight = new ServoClassMT("rightintake", ServoClassMT.ServoType.CONTINUOUS_SERVO);
             spindexer = new ServoClassMT("spindexer", ServoClassMT.ServoType.CONTINUOUS_SERVO);
             flipper = new ServoClassMT("flipper", ServoClassMT.ServoType.STANDARD_SERVO);
 
@@ -64,7 +69,7 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             // Initialize shooter
             shooter = new MotorPowerRegulator_New(hardwareMap, multitelemetry, "shooter");
             shooter.setTicksPerRev(537.7);
-            shooter.setMaxRpmUnderLoad(300.0);
+            shooter.setMaxRpmUnderLoad(1400.0);
             shooter.setAllGains(0.00068, 0.06, 0.0004, 0.0002, 0.00005);
             shooter.setTargetRPM(SHOOTER_IDLE_RPM);
 
@@ -118,7 +123,7 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
 
-            // Toggle controls with debouncing
+            // Toggle controls with debouncing - Gamepad 1
             if (gamepad1.a && !lastGamepad1A) drive.useFieldCentric = !drive.useFieldCentric;
             if (gamepad1.x && !lastGamepad1X) drive.useImuForFieldCentric = !drive.useImuForFieldCentric;
             if (gamepad1.right_bumper && !lastGamepad1RightBumper) drive.nerf = (drive.nerf == NORMAL_SPEED) ? SLOW_SPEED : NORMAL_SPEED;
@@ -130,6 +135,10 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             lastGamepad1RightBumper = gamepad1.right_bumper;
             lastGamepad1Start = gamepad1.start;
             lastGamepad1Back = gamepad1.back;
+
+            // Toggle controls with debouncing - Gamepad 2
+            if (gamepad2.y && !lastGamepad2Y) auto_shoot = !auto_shoot;
+            lastGamepad2Y = gamepad2.y;
 
             // Update odometry and drive
             if (odometryInitialized) updateOdometry();
@@ -152,11 +161,21 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             else if (gamepad2.dpad_right) spindexer.goToPosition(1);
             else spindexer.stop();
 
-            // Flipper controls
-            if (shooter.getTargetRPM() - shooter.getCurrentRPM() <= 50 && gamepad2.dpad_up) {
-                flipper.goToPosition(0.5);
-            } else if (gamepad2.dpad_down) {
-                flipper.goToPosition(0);
+            // Flipper controls - Manual or Auto
+            if (auto_shoot) {
+                // Auto shoot mode - automatically flip when shooter is ready
+                if (shooter.getCurrentRPM() >= 120) {
+                    flipper.goToPosition(0.5);
+                } else {
+                    flipper.goToPosition(0.25);
+                }
+            } else {
+                // Manual mode - only flip on button press
+                if (shooter.getCurrentRPM() >= 120 && gamepad2.dpad_up) {
+                    flipper.goToPosition(0.5);
+                } else if (gamepad2.dpad_down) {
+                    flipper.goToPosition(0.25);
+                }
             }
 
             // Shooter controls
@@ -186,17 +205,20 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             multitelemetry.addData("Intake", intakeStatus);
             multitelemetry.addData("Spindexer", spindexerStatus);
             multitelemetry.addData("Flipper Pos", "%.2f", flipper.getCurrentPosition());
+            multitelemetry.addData("Auto Shoot", auto_shoot ? "ON 🟢" : "OFF 🔴");
             multitelemetry.addData("Shooter Target", "%.0f RPM", shooter.getTargetRPM());
             multitelemetry.addData("Shooter Current", "%.0f RPM %s", shooter.getCurrentRPM(), shooter.isAtTarget(50) ? "✓" : "✗");
 
-            multitelemetry.addData("", "=== Controls ===");
+            multitelemetry.addData("", "=== Controls GM 1 ===");
             multitelemetry.addData("GP1 A", "Toggle Field/Robot");
             multitelemetry.addData("GP1 X", "Toggle IMU/Odo");
             multitelemetry.addData("GP1 RB", "Toggle Speed");
             multitelemetry.addData("GP1 Start/Back", "Reset IMU/Odo");
+            multitelemetry.addData("", "=== Controls GM2 ===");
             multitelemetry.addData("GP2 Bumpers", "Intake");
             multitelemetry.addData("GP2 DPad L/R", "Spindexer");
-            multitelemetry.addData("GP2 DPad U/D", "Flipper");
+            multitelemetry.addData("GP2 DPad U/D", "Flipper (Manual)");
+            multitelemetry.addData("GP2 Y", "Toggle Auto Shoot");
             multitelemetry.addData("GP2 RT", "Shooter");
             multitelemetry.update();
 

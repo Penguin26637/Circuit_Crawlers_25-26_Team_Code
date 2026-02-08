@@ -63,7 +63,7 @@ public class SHOOTERTESTMODE extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        shooter  = hardwareMap.get(DcMotor.class, "sh");
+        shooter  = hardwareMap.get(DcMotor.class, "shooter");
 
 
         waitForStart();
