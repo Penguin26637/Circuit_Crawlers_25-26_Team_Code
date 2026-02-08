@@ -37,6 +37,8 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
 
     private boolean auto_shoot = false;
 
+    private boolean shooteractive = false;
+
     @Override
     public void runOpMode() {
         multitelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -171,7 +173,7 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
                 }
             } else {
                 // Manual mode - only flip on button press
-                if (shooter.getCurrentRPM() >= 120 && gamepad2.dpad_up) {
+                if (shooter.getCurrentRPM() >= 110 && gamepad2.dpad_up) {
                     flipper.goToPosition(0.5);
                 } else if (gamepad2.dpad_down) {
                     flipper.goToPosition(0.25);
@@ -179,7 +181,20 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             }
 
             // Shooter controls
-            shooter.setTargetRPM(gamepad2.right_trigger >= 0.2 ? SHOOTER_ACTIVE_RPM : SHOOTER_IDLE_RPM);
+            if (gamepad2.a && !shooteractive){
+               shooteractive = true;
+               sleep(20);
+            } else if (gamepad2.a && shooteractive) {
+                shooteractive = false;
+                sleep(20);
+            }
+
+            if (shooteractive)
+                shooter.setTargetRPM((SHOOTER_ACTIVE_RPM));
+            else{
+                shooter.setTargetRPM(SHOOTER_IDLE_RPM);
+            }
+//            shooter.setTargetRPM(shooteractive ? SHOOTER_ACTIVE_RPM : SHOOTER_IDLE_RPM);
             shooter.loop();
 
             // Telemetry

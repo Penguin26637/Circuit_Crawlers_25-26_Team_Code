@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -68,7 +69,7 @@ public class DriveControlClassGregMT {
                 backRightDrive = hardwareMap.get(DcMotor.class, "backr");
 
                 frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-                frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+                frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
                 backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
                 backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -89,8 +90,8 @@ public class DriveControlClassGregMT {
             try {
                 imu = hardwareMap.get(IMU.class, "imu");
                 IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP));
                 imu.initialize(parameters);
                 imuInitialized = true;
             } catch (Exception e) {
@@ -220,10 +221,10 @@ public class DriveControlClassGregMT {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        backLeftDrive.setPower(forward - strafe + turn);
-        backRightDrive.setPower(-forward + strafe + turn);
-        frontLeftDrive.setPower(forward + strafe + turn);
-        frontRightDrive.setPower(-forward - strafe + turn);
+        backLeftDrive.setPower((-forward - strafe - turn)*nerf);
+        backRightDrive.setPower((forward - strafe - turn)*nerf);
+        frontLeftDrive.setPower((-forward + strafe - turn)*nerf);
+        frontRightDrive.setPower((forward + strafe - turn)*nerf);
     }
 
     /**
