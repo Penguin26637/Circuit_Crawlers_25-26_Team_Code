@@ -367,7 +367,7 @@ public class CameraVisionOuttakeDetection {
 
 
         exposureControl.setMode(ExposureControl.Mode.Manual);
-        exposureControl.setExposure((long) 20, TimeUnit.MILLISECONDS);
+        exposureControl.setExposure((long) 49, TimeUnit.MILLISECONDS);
 
 
         whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
@@ -375,7 +375,7 @@ public class CameraVisionOuttakeDetection {
 
 
 
-        gainControl.setGain(25);
+        gainControl.setGain(5);
 
 
         // Set zoom to minimum (fully zoomed out)
