@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -27,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *   (Release all buttons to stop intake)
  */
 @TeleOp(name = "Servo Demo - TeleOp MT", group = "Demo")
+@Disabled
 public class ServoTeleOpDemoMT extends OpMode {
 
     // Servo objects

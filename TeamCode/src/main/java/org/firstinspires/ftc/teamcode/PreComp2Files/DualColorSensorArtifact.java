@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.PreComp2Files;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -11,6 +12,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 @TeleOp(name="Dual V3 Smoothed Detection Dashboard", group = "Testing")
 @Config
+@Disabled
 public class DualColorSensorArtifact extends LinearOpMode {
 
     // Hue thresholds (editable on dashboard)

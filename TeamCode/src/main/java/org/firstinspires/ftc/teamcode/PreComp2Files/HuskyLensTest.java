@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.PreComp2Files;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 @TeleOp(name = "HuskyLensTest", group = "Camera Vision")
+@Disabled
 public class HuskyLensTest extends LinearOpMode {
 
     private static final int READ_PERIOD = 1; // seconds

@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.ObjectDetectionExamp
  */
 @TeleOp(name = "TeleOp Comb (Debugged)_2", group = "Examples")
 @Config
+@Disabled
 public class teleOpCOMB extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * 3. Simple setup + method calls
  */
 @TeleOp(name = "Motor Class All Options", group = "Test")
+@Disabled
 public class MotorExample extends LinearOpMode {
 
     // Configuration constants

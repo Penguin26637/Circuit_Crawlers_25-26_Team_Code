@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.M
 import org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.MT.ServoClassMT;
 
 @Autonomous(name = "INTO THE DEEP Auto", group = "Competition")
+@Disabled
 public class RoadRunnerAutoGreg extends LinearOpMode {
 
     // Hardware

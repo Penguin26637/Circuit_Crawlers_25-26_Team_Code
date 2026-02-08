@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.OT;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms.MotorPowerRegulator_N
  * Uses DriveControlClassGreg for drive, odometry handled directly in file
  */
 @TeleOp(name = "ErikandBradyBrokeEverything", group = "Main")
+@Disabled
 public class ErikandBradyBrokeEverything extends LinearOpMode {
 
     // ========== HARDWARE ==========

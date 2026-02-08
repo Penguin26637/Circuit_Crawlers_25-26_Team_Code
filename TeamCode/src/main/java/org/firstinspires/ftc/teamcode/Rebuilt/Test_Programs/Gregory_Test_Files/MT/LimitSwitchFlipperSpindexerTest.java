@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.Gregory_Test_Files.
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 @TeleOp(name = "LimitSwitch + Flipper + Spindexer Test", group = "Test")
+@Disabled
 public class LimitSwitchFlipperSpindexerTest extends LinearOpMode {
 
     private MultipleTelemetry multitelemetry;

@@ -5,6 +5,7 @@
 
     import com.acmerobotics.dashboard.FtcDashboard;
     import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+    import com.qualcomm.robotcore.eventloop.opmode.Disabled;
     import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
     import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -25,6 +26,7 @@
     import java.util.concurrent.TimeUnit;
 
     @TeleOp(name = "BallRecongition", group = "Camera Vision")
+    @Disabled
     public class BallRecongition extends LinearOpMode {
 
         // Toggle for showing radius telemetry

@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -51,7 +52,7 @@ total                   5x motors
 
 @TeleOp(name="CPUplsCookUpdated", group="Drive Train")
 @Config
-// @Disabled
+ @Disabled
 public class CPUplsCookUpdated extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---

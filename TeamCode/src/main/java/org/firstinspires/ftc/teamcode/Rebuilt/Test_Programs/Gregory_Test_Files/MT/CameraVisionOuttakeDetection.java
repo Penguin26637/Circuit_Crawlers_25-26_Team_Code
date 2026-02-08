@@ -108,10 +108,11 @@ public class CameraVisionOuttakeDetection {
 //    private boolean redDetected = false;
 
 
-//    private boolean greenDetected = false;
+    //    private boolean greenDetected = false;
 //    private boolean purpleDetected = false;
     // Initialization flag
     private boolean initialized = false;
+    private boolean cameraStreamStarted = false;
 
 
     // ==================== CONSTRUCTOR ====================
@@ -335,14 +336,24 @@ public class CameraVisionOuttakeDetection {
 
     /**
      * Start/restart the camera stream to dashboard
+     * IMPORTANT: This should only be called ONCE after waitForStart(), not in the loop!
      */
     public void startCameraStreamSystem() {
-        dashboard.startCameraStream(visionPortal, 60);
+        if (!cameraStreamStarted) {
+            // Resume camera streaming (in case it was paused)
+            visionPortal.resumeStreaming();
+
+            // Start the dashboard camera stream ONCE
+            dashboard.startCameraStream(visionPortal, 0);  // 0 = max FPS (no artificial limit)
+
+            cameraStreamStarted = true;
+        }
     }
 
     public void stopCameraStreamandVision() {
         dashboard.stopCameraStream();
         visionPortal.close();
+        cameraStreamStarted = false;
     }
 
 
@@ -392,7 +403,7 @@ public class CameraVisionOuttakeDetection {
         double roiCenterY = (roiTop + roiBottom) / 2.0;
         Circle closestCircle = null;
         double minDistance = Double.MAX_VALUE;
-        for (ColorBlobLocatorProcessor.Blob b : purpleBlobs) {
+        for (ColorBlobLocatorProcessor.Blob b : blobList) {
             Circle c = b.getCircle();
             double dist = Math.hypot(c.getX() - roiCenterX, c.getY() - roiCenterY);
             if (dist < minDistance) {
@@ -409,34 +420,40 @@ public class CameraVisionOuttakeDetection {
     public String detectClosestObjectAndDecide(String color) {
 
         if(color.equals("Purple")) {
+            // Get fresh blob list each time
+            List<ColorBlobLocatorProcessor.Blob> currentPurpleBlobs = purpleLocator.getBlobs();
+
             ColorBlobLocatorProcessor.Util.filterByCriteria(
                     ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                    minContourArea, maxContourArea, purpleBlobs);
+                    minContourArea, maxContourArea, currentPurpleBlobs);
             ColorBlobLocatorProcessor.Util.filterByCriteria(
-                  ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
-                  minCircularity, 1.0, purpleBlobs);
+                    ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
+                    minCircularity, 1.0, currentPurpleBlobs);
             ColorBlobLocatorProcessor.Util.filterByCriteria(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO,
-                1, 3, purpleBlobs);
+                    ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO,
+                    1, 3, currentPurpleBlobs);
 
-            if(getClosestCircle(purpleBlobs) != null && purpleBlobs.get(0).getContourArea() >= 10000) {
+            if(getClosestCircle(currentPurpleBlobs) != null && !currentPurpleBlobs.isEmpty() && currentPurpleBlobs.get(0).getContourArea() >= 10000) {
                 return "Purple";
             }
 
         }
 
         if(color.equals("Green")) {
+            // Get fresh blob list each time
+            List<ColorBlobLocatorProcessor.Blob> currentGreenBlobs = greenLocator.getBlobs();
+
             ColorBlobLocatorProcessor.Util.filterByCriteria(
                     ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                    minContourArea, maxContourArea, greenBlobs);
+                    minContourArea, maxContourArea, currentGreenBlobs);
             ColorBlobLocatorProcessor.Util.filterByCriteria(
                     ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
-                    minCircularity, 1.0, greenBlobs);
+                    minCircularity, 1.0, currentGreenBlobs);
             ColorBlobLocatorProcessor.Util.filterByCriteria(
                     ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO,
-                    1, 3, greenBlobs);
+                    1, 3, currentGreenBlobs);
 
-            if(getClosestCircle(greenBlobs) != null && greenBlobs.get(0).getContourArea() >= 10000) {
+            if(getClosestCircle(currentGreenBlobs) != null && !currentGreenBlobs.isEmpty() && currentGreenBlobs.get(0).getContourArea() >= 10000) {
                 return "Green";
             }
 

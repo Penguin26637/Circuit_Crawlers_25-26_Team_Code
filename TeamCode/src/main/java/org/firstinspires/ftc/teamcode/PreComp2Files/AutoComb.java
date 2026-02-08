@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.PreComp2Files;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.Rebuilt.Test_Programs.ObjectDetectionExamp
  *   drive(24, 0.5);    // Drive forward 24 inches at 50% power
  */
 @Autonomous(name = "Auto Comb_2", group = "Auto")
+@Disabled
 public class AutoComb extends LinearOpMode {
 
     // --- Drive motors ---

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Rebuilt.MainPrograms;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="DriverPractice1", group="Drive Train")
+@Disabled
 public class DriverPractice1 extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---

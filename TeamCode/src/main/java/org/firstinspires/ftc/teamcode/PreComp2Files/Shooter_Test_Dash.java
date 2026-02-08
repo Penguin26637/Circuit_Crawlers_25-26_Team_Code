@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.PreComp2Files;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 @TeleOp(name="Shooter_Test_Dash", group = "Testing")
+@Disabled
 public class Shooter_Test_Dash extends OpMode {
 
     // ============= Motor Constants ============

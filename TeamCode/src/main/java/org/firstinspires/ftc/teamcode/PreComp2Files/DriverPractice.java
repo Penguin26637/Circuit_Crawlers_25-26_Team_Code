@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.PreComp2Files;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name="DriverPractice", group="Drive Train")
+@Disabled
 public class DriverPractice extends LinearOpMode {
 
     // --- Gamepad 1 drive motors ---

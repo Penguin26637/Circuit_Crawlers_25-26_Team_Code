@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(name="SHOOTERTESTMODE", group="Linear OpMode")
-//@Disabled
+@Disabled
 public class SHOOTERTESTMODE extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
