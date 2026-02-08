@@ -184,7 +184,7 @@ public class ErikandBradyBrokeEverythingMT extends LinearOpMode {
             if (gamepad2.a && !shooteractive){
                shooteractive = true;
                sleep(20);
-            } else if (gamepad2.a && shooteractive) {
+            } else if (gamepad2.b && shooteractive) {
                 shooteractive = false;
                 sleep(20);
             }
